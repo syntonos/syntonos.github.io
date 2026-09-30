@@ -56,7 +56,7 @@ export const projects = [
     summary: 'Autonomous Hexapod - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses.',
     description: 'Autonomous Hexapod - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses',
     colors: ['#e89ab6', '#a9b7f0'],
-    images: ['/public/images/can-schematic.png', '/public/images/can-pcb.png'],
+    images: ['/public/images/can-schematic.png', '/public/images/can-pcb.png', '/public/images/can-pcb-layout.png'],
     featured: true,
     scores: { fun: 4, usability: 8, subjective: 3, objective: 5 },
     skills: ['Altium', 'C++', 'Python', 'Embedded systems'],
