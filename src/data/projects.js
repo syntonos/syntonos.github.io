@@ -71,7 +71,7 @@ export const projects = [
     summary: 'A tiny 46-key ortholinear split keyboard with a custom PCB, embedded design with the nRF52840 bare MCU. Designed for use with a phone, with custom keybinds and shortcuts.',
     description: 'A tiny 46-key ortholinear split keyboard with a custom PCB, embedded design with the nRF52840 bare MCU. Designed for use with a phone, with custom keybinds and shortcuts.',
     colors: ['#f2b08c', '#e59fc0'],
-    images: ['/images/ortho-pcb.png', '/images/ortho-antenna.png'],
+    images: ['/public/images/ortho-pcb.png', '/public/images/ortho-antenna.png', '/public/images/ortho-schematic.png'],
     featured: true,
     scores: { fun: 7, usability: 10, subjective: 4, objective: 6 },
     skills: ['KiCad', 'nRF52840', 'CAD', 'QMK'],
