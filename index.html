@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Personal site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@1,400;1,600&family=Instrument+Serif:ital@0;1&family=Bodoni+Moda:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500&display=swap" rel="stylesheet">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="cf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#91cbfd"/><stop offset="1" stop-color="#fff"/></linearGradient>
+<mask id="inm"><rect width="24" height="24" fill="#fff"/><rect x="4.6" y="9.6" width="3" height="9.4"/><circle cx="6.1" cy="6.3" r="1.8"/><path d="M10 9.6h2.9v1.3c.5-.9 1.6-1.5 3-1.5 2.8 0 3.6 1.7 3.6 4.2V19h-3v-4.9c0-1.2-.3-2-1.4-2s-1.6.8-1.6 2V19h-3z"/></mask>
+</defs></svg>
+
+<div id="top">
+  <button id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  <a href="#/" class="nm"></a>
+  <ul class="icons" data-icons></ul>
+  <a class="em"></a>
+</div>
+<nav id="menu" aria-label="Menu">
+  <ul class="icons mi" data-icons></ul>
+</nav>
+
+<div id="home">
+<header id="hero">
+  <div id="skywrap"><canvas id="cA"></canvas><canvas id="cB"></canvas></div>
+  <div class="who"><h1></h1><p class="sub"></p><ul class="icons" data-icons></ul></div>
+</header>
+<main>
+<section id="work"><a class="dn" href="#/" aria-label="Scroll to selected work"><svg viewBox="0 0 56 28"><path d="M4 5 L28 22 L52 5"/></svg></a><h2 id="wh">SELECTED WORK</h2><svg id="trail"><path id="tp"/></svg><div id="plane"></div></section>
+<section id="end">
+  <div><h2>ABOUT ME</h2><p id="about"></p><a class="rz" href="#/resume" aria-label="Resume"><span>RESUME</span><svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></a></div>
+  <ul id="endlinks"></ul>
+</section>
+</main>
+<footer id="foot"></footer>
+</div>
+<div id="page" class="page" style="display:none"></div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
