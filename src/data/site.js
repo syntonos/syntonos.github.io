@@ -7,7 +7,7 @@ export const site = {
   wiki: 'https://wiki.minayeh.com',
   footer: '© Mina Yeh 2026',
   about:
-    'I believe adamantly in acting with universal human grace, exercising free will, and pursuing all the things of the universe with full-bodied curiosity. Currently leading FPGA CV and autonomy for Cornell University Physical Intelligence. Obsessed with exoskeletons, synthesizers, non-linearity, Taekwondo hurricane kicks, and learning how to better build community. Founding Jamboree Engineering @ Cornell for front-facing, uncompromisingly open-access engineering.',
+    'I believe adamantly in acting with universal human grace, exercising free will, and pursuing all the things of the universe with full-bodied curiosity. Leading FPGA CV and autonomy for Cornell University Physical Intelligence. Currently obsessed with exoskeletons, synthesizers, non-linearity, Taekwondo hurricane kicks, and learning how to better build community. [SITE IN PROGRESS]',
   links: {
     Instagram: 'https://www.instagram.com/_heiany/',
     LinkedIn: 'https://www.linkedin.com/in/mina-yeh/',

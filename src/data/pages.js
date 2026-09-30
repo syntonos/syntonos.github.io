@@ -12,7 +12,7 @@ export const resume = {
   intro: '',
   pdf: 'resume.pdf', // e.g. 'resume.pdf' (put the file in /public). Empty = button does nothing yet.
   experience: [['Electrical Subteam, Cornell University Physical Intelligence', '2026 - Present'], ['JLCPCB Student Ambassador', '2026 - Present'], ['R&D Intern @ MAG Manufacturing', '2026'], ['Cornell Duffield Engineering Student Ambassador', '2026 - Present']],
-  education: [['BS, Cornell University', '2025 -2029'], ['Stuyvesant High School', '2021 - 2025']],
+  education: [['BS, College of Engineering, Cornell University', '2025 -2029'], ['Stuyvesant High School', '2021 - 2025']],
   skills: 'FPGA Development, Embedded Systems, Firmware. Verilog, Altium, KiCad, LTSpice, Python, C++', 
   activities: [['Cornell Taekwondo', '2025 - Present'], ['qSTEM', 'Head of Outreach'], ['Maker Lab', '2025 - Present']],
   sideQuests: [['Climbing', 'Getting to V7!'], ['Getting lunch with all my professors', '3/5'], ['1000 Rejections', '21/1000']],
