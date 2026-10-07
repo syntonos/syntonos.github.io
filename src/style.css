@@ -1,0 +1,1594 @@
+/* ================================================================
+   STYLES: table of contents
+   1. Base + colors        5. Home: selected work + image stacks
+   2. Icons                6. Home: about + embossed links
+   3. Cover (title card)   7. Subpages (category, project, awards, resume)
+   4. Top bar + menu       8. Markdown body, then mobile rules at the bottom
+
+   Colors live in :root below. Change them there first.
+   ================================================================ */
+
+/* ================================================================
+   1. BASE + COLORS  (--off = page background, --ink = text, --cf = hover blue, --gr = grey lines)
+   ================================================================ */
+
+:root {
+  --off: #fffafa;
+  --ink: #141414;
+  --cf: #91cbfd;
+  --gr: #c8c8c8;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+html {
+  scroll-padding-top: 70px;
+}
+body {
+  margin: 0;
+  background: var(--off)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.2 0 0 0 .89 .2 0 0 0 .8804 .2 0 0 0 .8804 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  color: var(--ink);
+  font-family: 'Bodoni Moda', Didot, 'Times New Roman', serif;
+  overflow-x: hidden;
+}
+/* Paper grain: strong behind the cover sky, easing into the regular, softer grain below.
+   Only on the main page (main.js adds .is-home to <body> there). Subpages just get the
+   light, even base grain from the body rule above. (z-index -1 keeps it behind all content.) */
+body.is-home::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160vh;
+  z-index: -1;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.68 0 0 0 .65 .68 0 0 0 .6404 .68 0 0 0 .6404 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  /* strong through the cover sky (about the first 118vh), then eases into the regular grain */
+  -webkit-mask-image: linear-gradient(#000 0, #000 62%, rgba(0, 0, 0, 0.5) 74%, transparent 100%);
+  mask-image: linear-gradient(#000 0, #000 62%, rgba(0, 0, 0, 0.5) 74%, transparent 100%);
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+/* Line breaks: paragraphs wrap normally, so every line runs to the edge (text-wrap: "pretty" was removed
+   because it shortens lines early). main.js keeps the last two words of each paragraph together, so no
+   paragraph ends on a single stranded word. Headings are balanced. */
+p,
+li {
+  text-wrap: wrap;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+/* ================================================================
+   2. ICONS (Instagram / LinkedIn / GitHub)
+   ================================================================ */
+
+.icons {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+.ico {
+  display: block;
+  width: 30px;
+  height: 30px;
+}
+.ico svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.f {
+  fill: currentColor;
+}
+.s {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.ico:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+.ico:hover .f {
+  fill: url(#cf);
+}
+.ico:hover .s {
+  stroke: url(#cf);
+}
+.ico:hover svg {
+  filter: drop-shadow(0 1px 2px rgba(60, 90, 180, 0.28));
+}
+/* on the sky the gradient is light (cornflower to white) */
+#hero .ico:hover .f {
+  fill: url(#cfh);
+}
+#hero .ico:hover .s {
+  stroke: url(#cfh);
+}
+#hero .ico:hover svg {
+  filter: none;
+}
+/* ================================================================
+   3. COVER / TITLE CARD (.who = name + subtitle + icons; #skywrap = sky colors + haze + grain)
+   ================================================================ */
+
+#hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 540px;
+  overflow: visible;
+  color: #fff;
+}
+#skywrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -18vh;
+  overflow: hidden;
+  opacity: 0.96;
+  /* Sky palette: vivid pastels. Periwinkle #8a82ff, cornflower #6d7dff, sky blue #78b9ff,
+     lavender #b09cff / #c8b4ff. The deepest cornflower-periwinkle sits behind the text.
+     A warm "night light" layer (.warm, below) is multiplied over it, then the filter boosts saturation. */
+  background:
+    radial-gradient(ellipse 80% 62% at 14% 88%, rgba(104, 120, 255, 0.98), transparent 86%),
+    radial-gradient(ellipse 80% 58% at 18% 4%, rgba(128, 112, 255, 0.95), transparent 86%),
+    radial-gradient(ellipse 70% 52% at 90% 8%, rgba(110, 178, 255, 0.95), transparent 86%),
+    radial-gradient(ellipse 60% 44% at 34% 46%, rgba(130, 168, 255, 0.85), transparent 86%),
+    radial-gradient(ellipse 70% 48% at 74% 60%, rgba(172, 146, 255, 0.92), transparent 86%),
+    radial-gradient(ellipse 70% 44% at 80% 92%, rgba(196, 170, 255, 0.9), transparent 86%),
+    linear-gradient(180deg, #8a82ff 0%, #86b4ff 26%, #b09cff 52%, #c8b4ff 76%, #e0d4ff 100%);
+  /* Mask layers: a soft fade toward the edges, and a fade out at the bottom. */
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 80% 80% at 50% 45%,
+      #000 52%,
+      rgba(0, 0, 0, 0.6) 74%,
+      rgba(0, 0, 0, 0.2) 90%,
+      transparent 100%
+    ),
+    linear-gradient(#000 0, #000 68%, rgba(0, 0, 0, 0.6) 82%, rgba(0, 0, 0, 0.25) 92%, transparent 100%);
+  mask-image:
+    radial-gradient(
+      ellipse 80% 80% at 50% 45%,
+      #000 52%,
+      rgba(0, 0, 0, 0.6) 74%,
+      rgba(0, 0, 0, 0.2) 90%,
+      transparent 100%
+    ),
+    linear-gradient(#000 0, #000 68%, rgba(0, 0, 0, 0.6) 82%, rgba(0, 0, 0, 0.25) 92%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  filter: saturate(1.45) contrast(1.05);
+}
+/* Night light: a warm multiply layer over the sky only (it sits inside #skywrap, so the
+   text, icons and everything else are unaffected). Make it stronger by lowering the G/B values. */
+#skywrap .warm {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background: linear-gradient(180deg, rgb(255, 222, 186), rgb(255, 234, 208));
+}
+#skywrap canvas {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: -6%;
+  width: 100%;
+  height: 118%;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 1.6s;
+}
+#skywrap canvas.in {
+  opacity: 1;
+}
+#cB.in {
+  opacity: 0.7;
+}
+#skywrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse at 0% 50%, rgba(255, 210, 235, 0.18), transparent 55%),
+    linear-gradient(0deg, rgba(255, 190, 140, 0.2), transparent 45%),
+    linear-gradient(200deg, rgba(255, 60, 140, 0.06), transparent 40%, rgba(0, 190, 170, 0.06)),
+    radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(90, 90, 200, 0.14) 100%);
+}
+#skywrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  mix-blend-mode: overlay;
+  opacity: 0.9;
+  /* Strong grain on the sky (neutral grey noise blended with "overlay"; raise the 1.3 values for more).
+     The sky fades out at its bottom edge, and the page below keeps the softer base grain (see body). */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1.3 0 0 0 -.15 1.3 0 0 0 -.15 1.3 0 0 0 -.15 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Gull silhouettes, top right: warm off-white shapes with slightly rough edges.
+   The SVG is in index.html (change its fill to recolor); size and position are here. */
+#hero .gulls {
+  position: absolute;
+  z-index: 2;
+  top: 6vh;
+  right: 3vw;
+  width: clamp(230px, 22vw, 270px); /* min 230px so they stay about the same size on phones */
+  height: auto;
+  pointer-events: none;
+}
+#hero .who {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(90px, 15vh, 150px);
+  left: clamp(20px, 5vw, 72px);
+  text-align: left;
+}
+#hero h1 {
+  margin: 0;
+  font-family: 'Noto Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(2.6rem, 7vw, 6.5rem);
+  line-height: 1.1;
+  text-shadow:
+    0 5px 16px rgba(20, 40, 100, 0.55),
+    0 1px 3px rgba(20, 40, 100, 0.45);
+}
+#hero .sub {
+  display: inline-block;
+  margin: 16px 0 0;
+  font-family: 'Instrument Serif', Georgia, serif;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: clamp(0.95rem, 1.6vw, 1.3rem);
+  text-shadow: 0 2px 10px rgba(20, 40, 100, 0.55);
+}
+#hero .icons {
+  justify-content: flex-start;
+  margin-top: 18px;
+  filter: drop-shadow(0 2px 6px rgba(20, 40, 100, 0.55));
+}
+/* ================================================================
+   4. TOP BAR (appears after the cover) + DROPDOWN MENU
+   ================================================================ */
+
+#top {
+  position: fixed;
+  z-index: 30;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  padding: env(safe-area-inset-top, 0px) clamp(12px, 3vw, 32px) 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2.5vw, 28px);
+  background: rgba(255, 250, 250, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transform: translateY(-110%);
+  transition: transform 0.5s;
+}
+#top.on {
+  transform: none;
+}
+#top .nm {
+  font-family: 'Noto Serif', Georgia, serif;
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+#top .em {
+  margin-left: auto;
+  border-bottom: 3px solid #f8cdd7;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+#top .em:hover {
+  color: var(--cf);
+}
+#top .icons {
+  gap: 14px;
+}
+#top .ico {
+  width: 22px;
+  height: 22px;
+}
+#burger {
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  position: relative;
+  flex: none;
+}
+#burger span {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 1.5px;
+  background: var(--ink);
+  transition: 0.35s;
+}
+#burger span:nth-child(1) {
+  top: 16px;
+}
+#burger span:nth-child(2) {
+  top: 22px;
+}
+#burger span:nth-child(3) {
+  top: 28px;
+}
+#burger.x span:nth-child(1) {
+  top: 22px;
+  transform: rotate(45deg);
+}
+#burger.x span:nth-child(2) {
+  opacity: 0;
+}
+#burger.x span:nth-child(3) {
+  top: 22px;
+  transform: rotate(-45deg);
+}
+#menu {
+  position: fixed;
+  z-index: 25;
+  inset: 0;
+  padding-top: 60px;
+  background: var(--off);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.4s;
+}
+#menu.on {
+  opacity: 1;
+  visibility: visible;
+}
+.mi {
+  display: none;
+}
+.mb {
+  display: none;
+}
+#menu .mi a:hover {
+  transform: none;
+}
+#menu a {
+  font-size: clamp(2.2rem, 6.2vw, 3.7rem);
+  line-height: 1.3;
+  transition: 0.25s;
+}
+/* Hover: cornflower gradient text, a tiny 3px nudge and a faint shadow so it stays legible. */
+#menu a:hover {
+  transform: translateX(3px);
+  background: linear-gradient(90deg, #5b82dd, #b6cdf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(60, 90, 180, 0.28));
+}
+/* Same gradient on the icons inside the menu (see the #cf gradient in index.html) */
+/* ================================================================
+   5. HOME: SELECTED WORK (heading, plane path, project rows)
+   ================================================================ */
+
+#work {
+  position: relative;
+  padding: 30vh clamp(20px, 6vw, 90px) clamp(120px, 16vh, 200px);
+}
+#work > h2 {
+  text-align: center;
+  font-family: 'Bodoni Moda', Didot, serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  font-size: clamp(2.2rem, 6.5vw, 5.8rem);
+  line-height: 1;
+  margin: 0 0 clamp(240px, 26vh, 300px);
+}
+#trail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+#trail path {
+  fill: none;
+  stroke: #c4c4ca;
+  stroke-opacity: 0.75;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 12 18 12 0.1 12 0.1 12 8 12;
+}
+#plane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.proj {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12vw;
+  align-items: center;
+  min-height: 82vh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.proj.rev .stack {
+  order: 2;
+}
+/* Image stack: cards share one grid cell, so the box is as tall as the tallest image. */
+.stack {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  width: min(100%, 460px);
+  cursor: pointer;
+  justify-self: start;
+}
+.stack.single {
+  cursor: default;
+}
+.proj.rev .stack {
+  justify-self: end;
+}
+.card {
+  grid-area: 1/1;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 14px 34px rgba(60, 50, 30, 0.22);
+  transition:
+    transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1),
+    opacity 0.7s;
+}
+.card.ph {
+  width: 100%;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.55);
+}
+.card img {
+  display: block;
+  max-width: 100%;
+  max-height: 68vh;
+  width: auto;
+  height: auto;
+  border-radius: 4px;
+}
+.card[data-p='0'] {
+  z-index: 3;
+}
+.card[data-p='1'] {
+  transform: translate(18px, -16px) rotate(3deg);
+  z-index: 2;
+  opacity: 0.92;
+}
+.card[data-p='2'] {
+  transform: translate(-16px, -30px) rotate(-3deg);
+  z-index: 1;
+  opacity: 0.8;
+}
+.card:not([data-p='0']):not([data-p='1']):not([data-p='2']) {
+  opacity: 0;
+  pointer-events: none;
+}
+.stack:hover .card[data-p='0'] {
+  transform: scale(1.03);
+}
+.txt {
+  max-width: 400px;
+}
+.proj.rev .txt {
+  justify-self: end;
+  text-align: right;
+}
+.txt h3 {
+  margin: 0 0 12px;
+  font-weight: 500;
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+  line-height: 1.05;
+}
+.txt p {
+  margin: 0 0 20px;
+  line-height: 1.65;
+  font-size: 1.05rem;
+}
+.ul {
+  border-bottom: 4px solid #f8cdd7;
+  padding-bottom: 4px;
+  transition: 0.3s;
+}
+.ul:hover {
+  color: var(--cf);
+}
+/* ================================================================
+   6. HOME: ABOUT ME + LINKS + FOOTER
+   ================================================================ */
+
+#end {
+  position: relative;
+  z-index: 1;
+  padding: clamp(120px, 16vh, 200px) clamp(20px, 6vw, 90px) clamp(24px, 4vh, 48px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8vw;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+#end h2 {
+  margin: 0 0 20px;
+  font-family: 'Bodoni Moda', Didot, serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  font-size: clamp(1.9rem, 4.2vw, 3.8rem);
+  line-height: 1;
+}
+#end p {
+  line-height: 1.7;
+  max-width: none; /* fills the column, so it lines up with the RESUME button below */
+  font-size: 1.05rem;
+}
+#end ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+footer {
+  text-align: center;
+  padding: 0 0 12px;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+/* ================================================================
+   7. SUBPAGES (category tiles, project page, awards, resume)
+   ================================================================ */
+
+.page {
+  padding: 110px clamp(20px, 5vw, 72px) 90px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+.pt {
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  font-weight: 500;
+  margin: 0 0 0.25em;
+  line-height: 1;
+}
+.lead {
+  line-height: 1.7;
+  font-size: 1.1rem;
+  margin: 0 0 40px;
+}
+.blk {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: clamp(150px, 17vw, 235px);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+/* Tile = image area (.ti) with the title and year BELOW it, so text never sits on the image. */
+.tile {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  color: var(--ink);
+}
+.tile .ti {
+  flex: 1;
+  min-height: 0;
+  border-radius: 6px;
+  box-shadow: 0 8px 22px rgba(60, 50, 30, 0.14);
+  transition:
+    transform 0.45s,
+    box-shadow 0.45s;
+}
+/* Tiles with images: each image is shown whole (object-fit: contain) on a faint backdrop. */
+.tile .ti {
+  position: relative;
+  overflow: hidden;
+}
+.tile .ti.has-img {
+  background: rgba(150, 140, 205, 0.1);
+  box-shadow: none;
+}
+.tile .ti img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.tile .ti img.on {
+  opacity: 1;
+}
+.tile:hover .ti {
+  transform: scale(1.015);
+  box-shadow: 0 16px 34px rgba(60, 50, 30, 0.25);
+}
+.tile b {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+  font-size: clamp(1rem, 1.5vw, 1.3rem);
+  line-height: 1.15;
+}
+.tile small {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  opacity: 0.65;
+}
+.v0 > a:nth-child(1) {
+  grid-area: 1/1/3/3;
+}
+.v0 > a:nth-child(2) {
+  grid-area: 1/3/3/4;
+}
+.v0 > a:nth-child(3) {
+  grid-area: 1/4;
+}
+.v0 > a:nth-child(4) {
+  grid-area: 2/4;
+}
+.v1 > a:nth-child(1) {
+  grid-area: 1/1/2/3;
+}
+.v1 > a:nth-child(2) {
+  grid-area: 2/1;
+}
+.v1 > a:nth-child(3) {
+  grid-area: 2/2;
+}
+.v1 > a:nth-child(4) {
+  grid-area: 1/3/3/5;
+}
+.v2 > a:nth-child(1) {
+  grid-area: 1/1/3/3;
+}
+.v2 > a:nth-child(2) {
+  grid-area: 1/3/2/5;
+}
+.v2 > a:nth-child(3) {
+  grid-area: 2/3;
+}
+.v2 > a:nth-child(4) {
+  grid-area: 2/4;
+}
+.meta {
+  font-size: 1.15rem;
+  margin: 0 0 36px;
+  opacity: 0.75;
+  font-style: italic;
+}
+.sc {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 0 0 44px;
+}
+/* The four X/10 score boxes on project pages (.d = hover description) */
+.box {
+  position: relative;
+  background: none;
+  padding: 20px 18px;
+  min-height: 170px;
+  overflow: hidden;
+  cursor: default;
+  outline: 0;
+}
+.box .l {
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+.box .n {
+  font-size: clamp(2.6rem, 5vw, 3.8rem);
+  margin-top: 18px;
+  line-height: 1;
+}
+.box .n span {
+  font-size: 1.1rem;
+  opacity: 0.5;
+}
+.box .d {
+  position: absolute;
+  inset: 0;
+  padding: 18px;
+  background: #fffafa;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.box:hover .d,
+.box:focus .d,
+.box.open .d {
+  opacity: 1;
+}
+.body {
+  line-height: 1.75;
+  font-size: 1.1rem;
+  margin: 0;
+}
+.lk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 36px;
+  margin-top: 56px;
+  font-size: 1.2rem;
+}
+/* three links or fewer: spread across the width (first on the left, last on the right) */
+.lk.few {
+  justify-content: space-between;
+}
+.back {
+  display: inline-block;
+  margin-bottom: 28px;
+  opacity: 0.7;
+}
+.back:hover {
+  color: var(--cf);
+}
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gr);
+  font-size: 1.25rem;
+}
+.row i {
+  opacity: 0.6;
+  /* years / dates: never wrap, always flush right, evenly spaced digits */
+  flex: none;
+  white-space: nowrap;
+  text-align: right;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.rs {
+  margin: 38px 0 6px;
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+.rsp {
+  font-size: 0.95rem !important;
+  margin: 0;
+}
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6vw;
+}
+.sug {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.sug .tile .ti {
+  flex: none;
+  aspect-ratio: 4/3;
+}
+/* Awards rows */
+.aw {
+  display: grid;
+  grid-template-columns: 1.4fr 1.8fr 70px;
+  gap: 16px;
+  align-items: baseline;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gr);
+  font-size: 1.6rem;
+}
+/* the small description: Instrument Serif, darker than before */
+.aw span:nth-child(2) {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.35;
+  color: #2a2a2a;
+}
+.aw span:nth-child(3) {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.aw.hd span {
+  font-size: 0.85rem !important;
+  opacity: 0.55;
+}
+/* Embossed buttons (RESUME, DOWNLOAD PDF): base look. The shared rule further down adds the final emboss. */
+.rz {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 44px;
+  padding: 26px 60px;
+  border-radius: 8px;
+  font-family: 'Bodoni Moda', serif;
+  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+  letter-spacing: 0.42em;
+  color: #fffafa;
+  text-shadow:
+    1px 1px 1px #fff,
+    -1px -1px 1px rgba(0, 0, 0, 0.14);
+  background: #fffafa;
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.14),
+    inset -4px -4px 10px #fff;
+  transition: 0.3s;
+}
+.rz:hover {
+  box-shadow:
+    inset 6px 6px 13px rgba(0, 0, 0, 0.18),
+    inset -6px -6px 13px #fff;
+}
+.rz svg {
+  position: absolute;
+  right: 22px;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: #fffafa;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  filter: drop-shadow(1px 1px 0 #fff) drop-shadow(-1px -1px 0 rgba(0, 0, 0, 0.14));
+}
+/* Down arrow under the cover */
+.dn {
+  position: absolute;
+  top: 9vh;
+  left: 50%;
+  margin-left: -28px;
+  width: 56px;
+  height: 28px;
+  z-index: 2;
+  cursor: pointer;
+}
+.dn svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@keyframes bob {
+  50% {
+    transform: translateY(7px);
+  }
+}
+.sk {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+  line-height: 1.9;
+  margin: 32px 0 0;
+}
+/* generous space around each dot between skills */
+.sk .dot {
+  display: inline-block;
+  margin: 0 0.8em;
+  font-style: normal;
+  opacity: 0.55;
+}
+/* Resume: activities and side quests (name with a short description) */
+.item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gr);
+}
+.item b {
+  display: block;
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+.item p {
+  margin: 6px 0 0;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.35;
+  color: #2a2a2a;
+}
+.h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 36px 0 6px;
+  text-decoration: underline;
+  text-decoration-color: #acd5f4;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+/* Shared emboss look for the bottom links and the RESUME / DOWNLOAD buttons */
+#end li a,
+.rz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-indent: 0.34em;
+  border-radius: 8px;
+  font-family: 'Bodoni Moda', serif;
+  text-transform: uppercase;
+  letter-spacing: 0.34em;
+  color: var(--ink);
+  background: #fffafa;
+  text-shadow:
+    1px 1px 1px #fff,
+    -1px -1px 1px rgba(0, 0, 0, 0.18);
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.14),
+    inset -4px -4px 10px #fff;
+  transition: 0.3s;
+}
+#end li a {
+  padding: 20px 12px;
+  margin-bottom: 14px;
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+}
+.rz:hover,
+#end li a:hover {
+  box-shadow:
+    inset 6px 6px 13px rgba(0, 0, 0, 0.18),
+    inset -6px -6px 13px #fff;
+}
+.rz.dl svg {
+  fill: none;
+  stroke-width: 2.2;
+}
+.rz svg {
+  fill: #fffafa;
+  stroke: #fffafa;
+  stroke-width: 1.4;
+  filter: drop-shadow(2px 2px 1px #fff) drop-shadow(-2px -2px 2px rgba(0, 0, 0, 0.3));
+}
+/* ================================================================
+   MOBILE + ACCESSIBILITY RULES
+   ================================================================ */
+
+@media (max-width: 760px) {
+  .proj.rev .hl {
+    justify-content: flex-start;
+  }
+  /* use the full width on phones so the About text does not wrap early */
+  #end p {
+    max-width: none;
+  }
+  .proj,
+  #end {
+    grid-template-columns: 1fr;
+    gap: 6vh;
+  }
+  .proj {
+    min-height: auto;
+    margin-bottom: 12vh;
+  }
+  .proj.rev .stack {
+    order: 0;
+  }
+  .proj .stack,
+  .proj.rev .stack {
+    justify-self: center;
+    width: 88%;
+  }
+  .txt,
+  .proj.rev .txt {
+    justify-self: start;
+    text-align: left;
+    max-width: none;
+  }
+  .blk {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 150px;
+  }
+  .blk > a {
+    grid-area: auto !important;
+  }
+  .blk > a:nth-child(1) {
+    grid-area: auto/auto/span 2 / span 2 !important;
+  }
+  .blk > a:nth-child(2) {
+    grid-area: auto/auto/span 1 / span 2 !important;
+  }
+  .sc {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  #hero h1 {
+    font-size: clamp(2.6rem, 14vw, 4.6rem);
+  }
+  .mb {
+    display: inline;
+  }
+  #top .icons {
+    display: none;
+  }
+  .mi {
+    display: flex;
+    position: absolute;
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    justify-content: center;
+    gap: 22px;
+  }
+  .two,
+  .sug {
+    grid-template-columns: 1fr;
+  }
+  /* awards on phones: name on the left, year flush right on the same line, description underneath */
+  .aw {
+    grid-template-columns: 1fr auto;
+    gap: 4px 16px;
+  }
+  .aw span:nth-child(1) {
+    grid-area: 1 / 1;
+  }
+  .aw span:nth-child(3) {
+    grid-area: 1 / 2;
+  }
+  .aw span:nth-child(2) {
+    grid-area: 2 / 1 / 3 / 3;
+  }
+}
+@media (max-width: 480px) {
+  #top .icons {
+    display: none;
+  }
+  #top .em {
+    font-size: 0.8rem;
+  }
+  #top .nm {
+    font-size: 1.1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dn {
+    animation: none;
+  }
+  #skywrap canvas {
+    transition: none;
+  }
+}
+
+/* ================================================================
+   8. MARKDOWN PROJECT BODY (.md)
+   ================================================================ */
+
+.md {
+  line-height: 1.75;
+  font-size: 1.1rem;
+}
+.md > :first-child {
+  margin-top: 0;
+}
+.md h1,
+.md h2,
+.md h3 {
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 1.6em 0 0.5em;
+}
+.md h1 {
+  font-size: 2rem;
+}
+.md h2 {
+  font-size: 1.6rem;
+}
+.md h3 {
+  font-size: 1.3rem;
+}
+.md p {
+  margin: 0 0 1.1em;
+}
+.md img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.6em 0;
+  border-radius: 4px;
+}
+.md a {
+  border-bottom: 3px solid #f8cdd7;
+  transition: 0.3s;
+}
+.md a:hover {
+  color: var(--cf);
+}
+.md ul,
+.md ol {
+  padding-left: 1.3em;
+  margin: 0 0 1.1em;
+}
+.md blockquote {
+  margin: 1.4em 0;
+  padding-left: 1.1em;
+  border-left: 3px solid var(--gr);
+  font-style: italic;
+}
+.md code {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+.md pre {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 14px 16px;
+  overflow-x: auto;
+  border-radius: 4px;
+  line-height: 1.5;
+}
+.md pre code {
+  background: none;
+  padding: 0;
+}
+.md hr {
+  border: 0;
+  border-top: 1px solid var(--gr);
+  margin: 2em 0;
+}
+.md table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.4em 0;
+}
+.md th,
+.md td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--gr);
+}
+
+/* ================================================================
+   9. CURSOR + SCROLLBAR
+   ================================================================ */
+
+/* Custom paper-plane cursor: OFF by default (the normal mouse pointer is used). To bring it back, add
+   class="plane-cursor" to the <html> tag in index.html. It is a sleek white and grey plane with a soft shadow;
+   the two numbers after each url are the click point. */
+html.plane-cursor {
+  cursor:
+    url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAD6klEQVR4nO2YS0gbQRjHJ4kmvihGrBAfPUipip56bQtaWyhFEO+FQg9e25OHemgPgVZaiqgI1VYDFayK1fRi1USrXlqfKGiiIVYMFSQmxUSyZvPYzsSdOk42j80maMEP/mw2O7Pzy//75kHk4IKHHFzw+L8AFxZWmo6Ojmr572WUziVIQMXKypplY8Oq9Xq9eqvVeh2cggJwTqAkoKyx8fGc3W5nFhfXCktLS7cgqM5kMiFQBTgnRzEgGjAI5env73vFceDm7OyPNaVS+ai8vHyTYRidXq+/yoPS6U9p0OlLg1IPDel1Gk3hA5b1rtfU3KpEDYLBoMvj8XRMTU211dfXO/kfxPECxDWpQc9iNIhncLC/A90olapKo3HOFGool1/Jycl5XldXt+V2u19CR/P5/il1lHYQDaaEUg8MfOktKiq5jx4eHzOm2to7FWTHQCBgc7lc2ry8PB0462ZSHRVaB9FgTEuL9rXf7/egLzIyMisMhlkz2UihUJSo1er3ENTidDqfAOH6lOyoUIoRILu8vGwxm80j+EFmZla5wTCzGfYCufwaBrXZbPfASR2TcJIg5QQYR0Ey3d0dH7GLJ5DZZZOTM1uCL4KgxcXFYyzLGvf29jCo5PoUcvCfi0tLS9twHRwlG2RlZd+IBIkiPT39tkaj+YZA9/f30a4kaWmKBhiAYrq62ntIFzHkxMR3S7QXI9CCgoJxuDTpVldX8a5EgsYVMoF7JAUvFZRaq215Wl199xnd2e0+XK+qKksLdZTJOCTyM5xIAbjY+1QqFYt2pdzc3F4gPONFAQL+lyLAdKgsqBKY1nE4UfLJxnBbNDU0PHwBTtwWko8XA3UA5eDvMSQAMSCFUoyvOM1exDI///MT3Zl3zAb1C2qbkpW/7kD9hnLx7xVVi5HOg2Qt+qGY5uamPobxHAi0RY6w4NQt8t5PSDRcJEDaxdCMhrKPjAy/IRvyDuJ0YhAfCE81mVJREe1EHeZiZ2fbmMPhWKfakYA+4oo/k4CiIaOlGIBwF51G40QPbkQ4SLrHgvAUk06KcjMeB8+42Nb2bpxy0U9Bkg7SkKKWmFiAJCie0WjAP9PThg/oAVWDZKqFajAIEjhDxgIUdLG19e3E7u7OFETkKAjyKhkuHkAaFA2CXHQMDn5uJxzEUBwIT2MkxRXxppjeo49HR4eXrVbLVyA8ATiB/glFvAsmeeJGQvtvaJ+GOgSR6y5hMBwKkHigwb08HF1nQZCkEANIn5A5EJ5W0TUWK8Q6SJcEOSPpCZKUkJJiHJHcSwpkGkgsaAgZSDIYIF6cin4XKsXkpEl6pPzPH6lx+Rew1LgElBp/ARsQFsYKjni8AAAAAElFTkSuQmCC')
+      3 3,
+    auto;
+  cursor:
+    -webkit-image-set(
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAD6klEQVR4nO2YS0gbQRjHJ4kmvihGrBAfPUipip56bQtaWyhFEO+FQg9e25OHemgPgVZaiqgI1VYDFayK1fRi1USrXlqfKGiiIVYMFSQmxUSyZvPYzsSdOk42j80maMEP/mw2O7Pzy//75kHk4IKHHFzw+L8AFxZWmo6Ojmr572WUziVIQMXKypplY8Oq9Xq9eqvVeh2cggJwTqAkoKyx8fGc3W5nFhfXCktLS7cgqM5kMiFQBTgnRzEgGjAI5env73vFceDm7OyPNaVS+ai8vHyTYRidXq+/yoPS6U9p0OlLg1IPDel1Gk3hA5b1rtfU3KpEDYLBoMvj8XRMTU211dfXO/kfxPECxDWpQc9iNIhncLC/A90olapKo3HOFGool1/Jycl5XldXt+V2u19CR/P5/il1lHYQDaaEUg8MfOktKiq5jx4eHzOm2to7FWTHQCBgc7lc2ry8PB0462ZSHRVaB9FgTEuL9rXf7/egLzIyMisMhlkz2UihUJSo1er3ENTidDqfAOH6lOyoUIoRILu8vGwxm80j+EFmZla5wTCzGfYCufwaBrXZbPfASR2TcJIg5QQYR0Ey3d0dH7GLJ5DZZZOTM1uCL4KgxcXFYyzLGvf29jCo5PoUcvCfi0tLS9twHRwlG2RlZd+IBIkiPT39tkaj+YZA9/f30a4kaWmKBhiAYrq62ntIFzHkxMR3S7QXI9CCgoJxuDTpVldX8a5EgsYVMoF7JAUvFZRaq215Wl199xnd2e0+XK+qKksLdZTJOCTyM5xIAbjY+1QqFYt2pdzc3F4gPONFAQL+lyLAdKgsqBKY1nE4UfLJxnBbNDU0PHwBTtwWko8XA3UA5eDvMSQAMSCFUoyvOM1exDI///MT3Zl3zAb1C2qbkpW/7kD9hnLx7xVVi5HOg2Qt+qGY5uamPobxHAi0RY6w4NQt8t5PSDRcJEDaxdCMhrKPjAy/IRvyDuJ0YhAfCE81mVJREe1EHeZiZ2fbmMPhWKfakYA+4oo/k4CiIaOlGIBwF51G40QPbkQ4SLrHgvAUk06KcjMeB8+42Nb2bpxy0U9Bkg7SkKKWmFiAJCie0WjAP9PThg/oAVWDZKqFajAIEjhDxgIUdLG19e3E7u7OFETkKAjyKhkuHkAaFA2CXHQMDn5uJxzEUBwIT2MkxRXxppjeo49HR4eXrVbLVyA8ATiB/glFvAsmeeJGQvtvaJ+GOgSR6y5hMBwKkHigwb08HF1nQZCkEANIn5A5EJ5W0TUWK8Q6SJcEOSPpCZKUkJJiHJHcSwpkGkgsaAgZSDIYIF6cin4XKsXkpEl6pPzPH6lx+Rew1LgElBp/ARsQFsYKjni8AAAAAElFTkSuQmCC')
+          1x,
+        url('data:image/png;base64,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')
+          2x
+      )
+      3 3,
+    auto;
+}
+.plane-cursor a,
+.plane-cursor button,
+.plane-cursor [onclick],
+.plane-cursor .stack,
+.plane-cursor .dn,
+.plane-cursor #burger,
+.plane-cursor .tile {
+  cursor:
+    url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAD4klEQVR4nO2YS0wTURSGz0x5VEMMJQjBgAsgCjFx4YJE44aoOzbuSHSlSxYSE1kYEl2QqHHBAhNjwFJRnkGR8iapG2JCWBiBlApIMSmWEJ4C6bTTacd727lyuTOlHVoeJpzkzzx6Z+7X/5wzdzI8HPPg4ZjH/wXY0zNctb29fUM5zzE6kkii9g3j4+OziKXG5/OtLCwsPCwoKHCi87IiAinDIQbtIFdd/WhkcXFR6OuzncvPz59BoBaHw1GI4eGIHCWAeMIgkqe3t+uZ1yte6ezsmUhJSblbVFQ0LQiCpbu7+6wCyqb/UABJSFZr18Ty8tKg3x+83N7ebccnjUbjnbKyspmtra2nCDTzMEFZQFxfnv5+6yt8EAzCpba2LkdoIM+fSUtLe8yA8gcNylFbTpksBclUW/u6MTs751boRy7oKC+/XUxfGAgEXJubmzUZGRkWCJeHTAkgQc2k9RzEkwn19XXPJUnyhGaS+eLW1k8/6EEGgyHPZDK9QaCza2tr90A77XE7qpViDChOTU3Nzs/PdVFIRS0tH6dVN+D58wTU5XLdhPCji4aLC5KnwGQGUujoaHpLXAzNxCVdRJAzmjdCoLm5uQOiKNrcbjcBjbs+tRz856Ldbnc6nT8/0wMQ5IVIkDiSk5Ov5+TkDGLQpaUlvCrF1fF7AQYg7KKZdpFANjd3zu51YwyalZU15PF4LGiFKgR1x8cUnMYxlkFRKpKpsrLqQUnJtUr2YkkS7aWlV5PC0JyMRe+jRgqgh70/NTVVxKtSenp6I2h3vC5AUP4pBkxGOo2UZza3DhmNpzLpwevrq46KivtPIOy2lvyKBKQVpFXlmEACRIHUSjHZkjT7kJYnJ7+/Zy9WHHMhzSM5Gc0p219Iv5E2YeelI+Y0R3ofpGtRQhJqa1988HqFFY2x2BERdtyijyVKuuEiAbIuhjoaadlmG3y5e2jIQZJOAuIHdarplOqKvd6oVS42N78b2NhYtzPjaEA/tSX7NKBuyL1SDKB2cW10dMRMBik1yLongjrFtJO63IzFwV0uNjWZhxgXJQaSdpCF1PWIiQZIg5KOxhOuj419bcA/cBzQNUinWqsGg6BOdVTIaICaLlosDcNu98IXKsUB6k8EEwUXCyALiifBLq4ODFjrqC4mUDKo0xhJMUWsKWbXaK/NNvzN5Zq3gnYDyBrX7ytifWDSb9xYeP0NrdNIfyBy3e0bjIQB9h94cp8Cx9ZZEBIUegDZN2QZ1GnVXWPRQq+DbEnQHck2SEIinhSTiOReQiCTYH/BQnCQYDCgbnwQ1x2rFB/oV68D//gTb5x8Ao43TgDjjb+IwhlncmHMiQAAAABJRU5ErkJggg==')
+      3 3,
+    pointer !important;
+  cursor:
+    -webkit-image-set(
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAD4klEQVR4nO2YS0wTURSGz0x5VEMMJQjBgAsgCjFx4YJE44aoOzbuSHSlSxYSE1kYEl2QqHHBAhNjwFJRnkGR8iapG2JCWBiBlApIMSmWEJ4C6bTTacd727lyuTOlHVoeJpzkzzx6Z+7X/5wzdzI8HPPg4ZjH/wXY0zNctb29fUM5zzE6kkii9g3j4+OziKXG5/OtLCwsPCwoKHCi87IiAinDIQbtIFdd/WhkcXFR6OuzncvPz59BoBaHw1GI4eGIHCWAeMIgkqe3t+uZ1yte6ezsmUhJSblbVFQ0LQiCpbu7+6wCyqb/UABJSFZr18Ty8tKg3x+83N7ebccnjUbjnbKyspmtra2nCDTzMEFZQFxfnv5+6yt8EAzCpba2LkdoIM+fSUtLe8yA8gcNylFbTpksBclUW/u6MTs751boRy7oKC+/XUxfGAgEXJubmzUZGRkWCJeHTAkgQc2k9RzEkwn19XXPJUnyhGaS+eLW1k8/6EEGgyHPZDK9QaCza2tr90A77XE7qpViDChOTU3Nzs/PdVFIRS0tH6dVN+D58wTU5XLdhPCji4aLC5KnwGQGUujoaHpLXAzNxCVdRJAzmjdCoLm5uQOiKNrcbjcBjbs+tRz856Ldbnc6nT8/0wMQ5IVIkDiSk5Ov5+TkDGLQpaUlvCrF1fF7AQYg7KKZdpFANjd3zu51YwyalZU15PF4LGiFKgR1x8cUnMYxlkFRKpKpsrLqQUnJtUr2YkkS7aWlV5PC0JyMRe+jRgqgh70/NTVVxKtSenp6I2h3vC5AUP4pBkxGOo2UZza3DhmNpzLpwevrq46KivtPIOy2lvyKBKQVpFXlmEACRIHUSjHZkjT7kJYnJ7+/Zy9WHHMhzSM5Gc0p219Iv5E2YeelI+Y0R3ofpGtRQhJqa1988HqFFY2x2BERdtyijyVKuuEiAbIuhjoaadlmG3y5e2jIQZJOAuIHdarplOqKvd6oVS42N78b2NhYtzPjaEA/tSX7NKBuyL1SDKB2cW10dMRMBik1yLongjrFtJO63IzFwV0uNjWZhxgXJQaSdpCF1PWIiQZIg5KOxhOuj419bcA/cBzQNUinWqsGg6BOdVTIaICaLlosDcNu98IXKsUB6k8EEwUXCyALiifBLq4ODFjrqC4mUDKo0xhJMUWsKWbXaK/NNvzN5Zq3gnYDyBrX7ytifWDSb9xYeP0NrdNIfyBy3e0bjIQB9h94cp8Cx9ZZEBIUegDZN2QZ1GnVXWPRQq+DbEnQHck2SEIinhSTiOReQiCTYH/BQnCQYDCgbnwQ1x2rFB/oV68D//gTb5x8Ao43TgDjjb+IwhlncmHMiQAAAABJRU5ErkJggg==')
+          1x,
+        url('data:image/png;base64,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')
+          2x
+      )
+      3 3,
+    pointer !important;
+}
+
+/* Custom scrollbar (added by src/lib/scrollbar.js, mouse/trackpad only):
+   a dotted line with a flat 2D paper plane you can drag. */
+html.custom-scroll {
+  scrollbar-width: none;
+}
+html.custom-scroll::-webkit-scrollbar {
+  display: none;
+}
+#scrollbar {
+  position: fixed;
+  z-index: 40;
+  top: 76px; /* clears the top bar */
+  bottom: 18px;
+  right: 6px;
+  width: 22px;
+}
+#scrollbar {
+  transition: opacity 0.3s;
+}
+#scrollbar.off {
+  display: none;
+}
+/* hidden while the cover is on screen (set by scrollbar.js) */
+#scrollbar.away {
+  opacity: 0;
+  pointer-events: none;
+}
+.sb-track {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -3px;
+  height: 100%;
+}
+.sb-track line {
+  stroke: rgba(176, 160, 232, 0.55); /* thin, a little lavender */
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 10 12 10 12 0.1 12; /* dash, dash, dot... */
+}
+.sb-thumb {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -10px;
+  width: 20px;
+  height: 32px;
+  cursor: grab !important;
+  touch-action: none;
+  /* layered, neutral shadow: a tight contact shadow plus a soft long one */
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.22)) drop-shadow(0 4px 5px rgba(0, 0, 0, 0.16));
+  will-change: transform;
+}
+.sb-thumb svg {
+  display: block;
+}
+#scrollbar.drag .sb-thumb {
+  cursor: grabbing !important;
+}
+
+/* Text highlight: pale pastel lavender */
+::selection {
+  background: #e4dcfa;
+  color: inherit;
+}
+::-moz-selection {
+  background: #e4dcfa;
+  color: inherit;
+}
+/* white cover text would vanish on pale lavender, so it turns deep periwinkle while selected */
+#hero ::selection {
+  background: #e4dcfa;
+  color: #3b3680;
+  text-shadow: none;
+}
+#hero ::-moz-selection {
+  background: #e4dcfa;
+  color: #3b3680;
+  text-shadow: none;
+}
+
+/* Project links on the home page (see `home` / `linksOnHome` in projects.js) */
+.hl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 16px;
+  font-size: 0.95rem;
+}
+.hl .ul {
+  border-bottom-width: 3px;
+}
+.proj.rev .hl {
+  justify-content: flex-end;
+}
+
+/* Resume: one or two download buttons side by side (they stack on narrow screens) */
+.dl-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 0 26px;
+}
+.dl-row .rz {
+  flex: 1 1 260px;
+  max-width: 460px;
+  margin: 0;
+}
+.rz.dl {
+  padding: 24px 56px;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+}
+
+/* Contact page form */
+.cf {
+  max-width: 640px;
+}
+.cf label {
+  display: block;
+  margin-bottom: 22px;
+  font-size: 0.9rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.cf input,
+.cf textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--gr);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1.2rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  outline: 0;
+  transition: border-color 0.25s;
+}
+.cf textarea {
+  resize: vertical;
+}
+.cf input:focus,
+.cf textarea:focus {
+  border-bottom-color: #8a8aff;
+}
+.cf .bad {
+  border-bottom-color: #b5547a;
+}
+.cf .err {
+  display: block;
+  min-height: 1.3em;
+  margin-top: 6px;
+  font-style: normal;
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #b5547a;
+}
+.cf .hp {
+  position: absolute;
+  left: -9999px;
+}
+button.rz {
+  border: 0;
+  margin-top: 8px;
+  width: 100%;
+  max-width: 280px;
+}
+.cf-status {
+  margin-top: 18px;
+  min-height: 1.4em;
+}
+
+/* Contact page: description + direct links on the left, the form on the right */
+.cp {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr; /* the Send button sits right under the text; the form spans both rows */
+  column-gap: 6vw;
+  row-gap: 28px;
+  align-items: start;
+}
+.cp .lead {
+  margin-top: 0;
+}
+.cp .cf {
+  max-width: none;
+}
+/* desktop placement: text on the left, then the Send button under it; the form fills the right column */
+.cp-info {
+  grid-column: 1;
+  grid-row: 1;
+}
+.cp .cf {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+.cp-send {
+  grid-column: 1;
+  grid-row: 2;
+}
+.cp-send button.rz {
+  margin-top: 0;
+}
+@media (max-width: 760px) {
+  .cp {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: 32px;
+  }
+  .cp-info,
+  .cp .cf,
+  .cp-send {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* ================================================================
+   10. FREE-SIZE TILE GRID, PROJECT CAROUSEL
+   ================================================================ */
+
+/* Category page when projects have a `size` (e.g. '2x1'): 4 columns on desktop, 2 on phones.
+   --w / --h = columns / rows, --wm = columns on phones (set in pages.js). */
+.mod {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: clamp(150px, 17vw, 235px);
+  grid-auto-flow: dense;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mod > .tile {
+  grid-column: span var(--w);
+  grid-row: span var(--h);
+}
+
+/* Project page: description on the left, image carousel on the right */
+.pj-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5vw;
+  align-items: start;
+}
+.pj-split .md {
+  min-width: 0;
+}
+.car {
+  position: sticky;
+  top: 84px; /* stays in view while a long description scrolls */
+  outline: 0;
+}
+/* the box is resized by carousel.js to match the current image, so nothing is cropped */
+.car-stage {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  transition: height 0.35s ease;
+  touch-action: pan-y;
+}
+.car-stage img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.45s;
+  filter: drop-shadow(0 10px 18px rgba(60, 50, 30, 0.2));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.car-stage img.on {
+  opacity: 1;
+}
+.car-cap {
+  min-height: 1.4em;
+  margin: 14px 0 0;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  text-align: center;
+  color: #2a2a2a;
+}
+.car-ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 6px;
+}
+.car-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--off);
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.08),
+    inset -2px -2px 5px #fff;
+  cursor: pointer;
+}
+.car-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.car-dots {
+  display: flex;
+  gap: 10px;
+}
+.car-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c, #8a8aff); /* each dot's blue-to-lavender color is set in carousel.js */
+  opacity: 0.45;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.car-dot.on {
+  opacity: 1;
+  transform: scale(1.35);
+}
+@media (max-width: 760px) {
+  .mod {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 150px;
+  }
+  .mod > .tile {
+    grid-column: span var(--wm);
+  }
+  .pj-split {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .car {
+    position: static;
+  }
+}

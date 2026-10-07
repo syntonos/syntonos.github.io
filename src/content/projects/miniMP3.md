@@ -1,0 +1,1 @@
+A very tiny MP3 player, designed to take up as little space as possible. The footprint was designed around two rotary switches (volume, selection) and a 1.54" OLED screen. Every single component had to fit into that space, so that was a fairly fun layout challenge. Designed in KiCad. Firmware written in C++. 
