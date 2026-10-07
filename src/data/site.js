@@ -14,7 +14,7 @@ export const site = {
   // Until `url` is filled in, the form opens the visitor's email app instead (a mailto: link).
   contact: {
     description:
-      'Questions, collaborations, or just saying hello? Send me a short note and I will get back to you.',
+      'Send me a message! I\'d love to chat!',
     googleForm: {
       url: 'https://forms.gle/VXJ4Nog4Lu6D8R2C7', // e.g. 'https://docs.google.com/forms/d/e/1FAIpQLSc.../formResponse'
       fields: { email: 'entry.0000000000', name: 'entry.0000000001', message: 'entry.0000000002' },
