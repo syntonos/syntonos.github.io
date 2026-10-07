@@ -4,10 +4,11 @@ import { site } from './site.js';
 // (Also add it to `nav` in site.js if you want it in the menu.)
 // ---------------------------------------------------------------
 export const categories = {
-  hardware: { title: 'Hardware', blurb: 'Circuits, machines and things that move.' },
-  software: { title: 'Software', blurb: 'Tools, toys and small systems.' },
-  arts: { title: 'Arts', blurb: 'Prints, paper and the odd sketchbook.' },
+  hardware: { title: 'Hardware', blurb: 'Embedded, FPGA, ASIC, Power Systems.' },
+  software: { title: 'Software', blurb: '' },
+  arts: { title: 'Arts', blurb: '' },
 };
+
 
 // Default labels/notes, used only by projects that give `scores` as { fun, usability, subjective, objective }
 // (optionally with `scoreNotes: { fun: '...' }` to override the hover text).
