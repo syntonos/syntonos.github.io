@@ -200,12 +200,12 @@ export const projects = [
     skills: ['Embedded', 'KiCad', 'C++', 'Firmware'],
     featured: true,
     wiki: site.wiki,
-    github: site.links.GitHub,
+    github: 'https://github.com/syntonos/miniMP3',
   },
   {
     slug: 'blackjack',
     category: 'software',
-    title: 'Blackjack, Modelled as a Markov Decision Process',
+    title: 'Blackjack, Modeled as a Markov Decision Process',
     year: 2025,
     summary:
       'A linear algebra presentation and python demonstration of Blackjack, as modeled as a Markov Decision Process + how to actually win.',
