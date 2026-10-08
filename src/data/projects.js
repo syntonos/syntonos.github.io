@@ -85,18 +85,18 @@ export const projects = [
       {
         label: 'Fun',
         value: 8,
-        note: 'Watching the first clean 5V rail come up was the best moment of the build.',
+        note: '',
       },
       {
         label: 'Usability',
         value: 6,
-        note: 'The dials are labelled, but the current limit still needs the manual.',
+        note: '',
       },
-      { label: 'Difficulty (Subjective)', value: 7, note: 'Mains wiring made me nervous the whole time.' },
+      { label: 'Difficulty (Subjective)', value: 7, note: '' },
       {
         label: 'Difficulty (Objective)',
         value: 7,
-        note: 'Moderate: a transformer, a regulator board and careful enclosure work.',
+        note: '',
       },
     ],
     skills: ['Soldering', 'KiCad', 'C++', '3D printing'],
@@ -113,9 +113,9 @@ export const projects = [
     title: 'CUPI CAN Board + Firmware Stack (Autonomous Hexapod)',
     year: 2023,
     summary:
-      'Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDFCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.',
+      'Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.',
     description:
-      'Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDFCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.',
+      'Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.',
     colors: ['#e89ab6', '#a9b7f0'],
     images: [],
     scores: [
@@ -248,12 +248,12 @@ export const projects = [
       {
         label: 'Difficulty (Subjective)',
         value: 7,
-        note: 'I hate frontend.',
+        note: 'Frontend!',
       },
       {
         label: 'Difficulty (Objective)',
         value: 8,
-        note: 'I don\'t actually know anyone who likes frontend.',
+        note: 'Probably easier if you didn\'t learn frontend as you were making the project.',
       },
     ],
     skills: ['Design', 'TSX', 'React'],
