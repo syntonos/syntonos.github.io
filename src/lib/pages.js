@@ -126,17 +126,17 @@ function projectPage(categoryKey, slug) {
   // Description on the left and an image carousel on the right, if the project has a `gallery`
   const body = `<div class="md">${renderMarkdown(projectBody(p))}</div>`;
   const gallery = galleryOf(p);
-  const bodyAndGallery = gallery.length
-    ? `<div class="pj-split">${body}${carouselHTML(gallery)}</div>`
-    : body;
+  // The description, skills and links form one text column, so skills and links sit right under the
+  // description (with a little space) no matter how tall the carousel is.
+  const text = `<div class="pj-text">${body}${skills}${links}</div>`;
+  const content = gallery.length ? `<div class="pj-split">${text}${carouselHTML(gallery)}</div>` : text;
 
   return `
     ${backLink('#/' + categoryKey, categories[categoryKey].title)}
     <h1 class="pt">${p.title}</h1>
     <p class="meta">${categories[categoryKey].title}, ${p.year}</p>
     ${scoreBoxes}
-    ${bodyAndGallery}
-    ${skills}${links}
+    ${content}
     <h2 class="h3" style="margin-top:84px">Next up</h2>
     <div class="sug">${next.map(tile).join('')}</div>`;
 }
@@ -181,9 +181,10 @@ function resumePage() {
 
 // ---------- contact (#/contact) ----------
 function contactPage() {
-  // Two columns: left = description + direct links + the Send button, right = the form fields (on phones:
-  // text, then the form, then the Send button)
+  // Two columns: left = description + direct links, right = the form fields, and the Send button centered
+  // underneath both. The page is sized to fit one screen (it only scrolls if the window is too short).
   return `
+    <div class="contact-wrap">
     <h1 class="pt">Contact</h1>
     <div class="cp">
       <div class="cp-info">
@@ -203,7 +204,7 @@ function contactPage() {
         <em class="err"></em>
       </label>
       <label>Message
-        <textarea name="message" rows="7"></textarea>
+        <textarea name="message" rows="4"></textarea>
         <em class="err"></em>
       </label>
       <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -212,6 +213,7 @@ function contactPage() {
         <button class="rz" type="submit" form="contact-form"><span>Send</span></button>
         <p class="cf-status" role="status"></p>
       </div>
+    </div>
     </div>`;
 }
 

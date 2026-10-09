@@ -37,18 +37,45 @@ export function renderFeatured(onLayout) {
   $$('.stack img').forEach((img) => img.addEventListener('load', onLayout));
 }
 
-/** Cycle the cards on hover (desktop) or tap (mobile). One image = nothing to cycle. */
+/** How long each image stays on screen before the next fades in (milliseconds). */
+const ROTATE_EVERY = 4500;
+
+/**
+ * One image is shown at a time. With 2+ images they rotate automatically, pause while the mouse is over
+ * them, and a click / tap moves to the next one. (Not used when the visitor prefers reduced motion.)
+ */
 function setupStack(stack) {
   const cards = $$('.card', stack);
   if (cards.length < 2) return stack.classList.add('single');
 
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let timer;
-  // data-p is each card's position in the stack: 0 = front, 1 = next, ...
+  let hovered = false;
+  // data-p is each card's position: 0 = the visible one, 1 = next up, ...
   const step = () => cards.forEach((c) => (c.dataset.p = (+c.dataset.p + 1) % cards.length));
-  stack.addEventListener('mouseenter', () => {
-    step();
-    timer = setInterval(step, 1300);
+  const stop = () => clearInterval(timer);
+  const start = () => {
+    stop();
+    if (reduceMotion || hovered) return;
+    timer = setInterval(() => {
+      if (!document.hidden) step(); // do not rotate in a background tab
+    }, ROTATE_EVERY);
+  };
+
+  // only a real mouse pauses it (touch screens fire hover events on tap)
+  stack.addEventListener('pointerenter', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    hovered = true;
+    stop();
   });
-  stack.addEventListener('mouseleave', () => clearInterval(timer));
-  stack.addEventListener('click', step);
+  stack.addEventListener('pointerleave', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    hovered = false;
+    start();
+  });
+  stack.addEventListener('click', () => {
+    step();
+    start(); // restart the countdown after a manual change
+  });
+  setTimeout(start, Math.random() * 1500); // stagger, so several stacks do not change at the same moment
 }

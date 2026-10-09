@@ -125,6 +125,7 @@ function route() {
   pg.style.display = state.isHome ? 'none' : '';
   if (!state.isHome) {
     pg.innerHTML = renderPage(p);
+    pg.classList.toggle('is-contact', p[0] === 'contact'); // contact page: fit one screen
     setupTileCycling(pg);
     setupCarousels(pg);
     setupContactForm(pg);
@@ -134,6 +135,18 @@ function route() {
   } else document.title = site.name;
   toggleMenu(false);
   state.isHome ? rebuild() : tick();
+  updateScrollLock();
 }
+/** The contact page is meant to fit one screen: lock scrolling while it fits, allow it only if it overflows. */
+function updateScrollLock() {
+  const onContact = !state.isHome && $('#page').classList.contains('is-contact');
+  // measure #page itself (not the document), so the result does not depend on the lock we apply
+  const fits = $('#page').scrollHeight <= innerHeight + 1;
+  document.documentElement.classList.toggle('no-scroll', onContact && fits);
+}
+new ResizeObserver(updateScrollLock).observe($('#page')); // content height changed (messages, fonts, resize)
+addEventListener('resize', updateScrollLock);
+
 addEventListener('hashchange', route);
 route();
+updateScrollLock();

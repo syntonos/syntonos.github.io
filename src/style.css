@@ -480,12 +480,14 @@ h3 {
   width: fit-content;
   max-width: 100%;
   border-radius: 4px;
-  box-shadow: 0 14px 34px rgba(60, 50, 30, 0.22);
+  /* no box shadow: it would show as a rectangle behind a picture with a transparent background.
+     The shadow is drawn around the picture's own shape instead (see ".card img"). */
   transition:
     transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1),
-    opacity 0.7s;
+    opacity 0.9s;
 }
 .card.ph {
+  box-shadow: 0 14px 34px rgba(60, 50, 30, 0.22);
   width: 100%;
   aspect-ratio: 4/3;
   display: flex;
@@ -501,21 +503,13 @@ h3 {
   width: auto;
   height: auto;
   border-radius: 4px;
+  filter: drop-shadow(0 14px 22px rgba(60, 50, 30, 0.22));
 }
 .card[data-p='0'] {
   z-index: 3;
 }
-.card[data-p='1'] {
-  transform: translate(18px, -16px) rotate(3deg);
-  z-index: 2;
-  opacity: 0.92;
-}
-.card[data-p='2'] {
-  transform: translate(-16px, -30px) rotate(-3deg);
-  z-index: 1;
-  opacity: 0.8;
-}
-.card:not([data-p='0']):not([data-p='1']):not([data-p='2']) {
+/* only the current image is visible; the others wait underneath, fully transparent */
+.card:not([data-p='0']) {
   opacity: 0;
   pointer-events: none;
 }
@@ -637,7 +631,10 @@ footer {
   overflow: hidden;
 }
 .tile .ti.has-img {
-  background: rgba(150, 140, 205, 0.1);
+  background: none; /* a picture with a transparent background stays transparent */
+  box-shadow: none;
+}
+.tile:hover .ti.has-img {
   box-shadow: none;
 }
 .tile .ti img {
@@ -648,6 +645,7 @@ footer {
   object-fit: contain;
   opacity: 0;
   transition: opacity 0.5s;
+  filter: drop-shadow(0 8px 14px rgba(60, 50, 30, 0.18)); /* follows the picture's own shape */
 }
 .tile .ti img.on {
   opacity: 1;
@@ -1420,9 +1418,9 @@ button.rz {
 .cp {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr; /* the Send button sits right under the text; the form spans both rows */
+  grid-template-rows: auto 1fr; /* row 1: the text, row 2: all the space below it (the Send button lives there) */
   column-gap: 6vw;
-  row-gap: 28px;
+  row-gap: 0;
   align-items: start;
 }
 .cp .lead {
@@ -1438,11 +1436,23 @@ button.rz {
 }
 .cp .cf {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 2; /* the form fills the whole right column */
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
 }
+/* Send button: centered in the left column, in the space between the end of the description and the end of the page */
 .cp-send {
   grid-column: 1;
   grid-row: 2;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* horizontally centered in the column */
+  justify-content: center; /* vertically centered in the leftover space */
+}
+.cp-send .cf-status {
+  text-align: center;
 }
 .cp-send button.rz {
   margin-top: 0;
@@ -1487,8 +1497,19 @@ button.rz {
   gap: 5vw;
   align-items: start;
 }
-.pj-split .md {
+.pj-text {
   min-width: 0;
+}
+/* skills and links sit right under the description, with a little space */
+.pj-text .sk {
+  margin-top: 26px;
+}
+.pj-text .lk {
+  margin-top: 22px;
+}
+.pj-split .lk.few {
+  justify-content: flex-start;
+  gap: 12px 36px;
 }
 .car {
   position: sticky;
@@ -1591,4 +1612,67 @@ button.rz {
   .car {
     position: static;
   }
+}
+
+/* Contact page: sized to fit one screen. It only scrolls if the window is too short for the content. */
+#page.is-contact {
+  padding-top: 92px;
+  padding-bottom: 28px;
+}
+.contact-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 120px); /* 92px top padding + 28px bottom padding */
+  min-height: calc(100dvh - 120px);
+}
+.contact-wrap .pt {
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  margin-bottom: 0.2em;
+}
+.contact-wrap .lead {
+  margin-bottom: 22px;
+}
+.contact-wrap .cp {
+  flex: 1;
+  min-height: 0;
+}
+/* tighter form spacing so everything fits; the Message box takes whatever height is left */
+.contact-wrap .cf label {
+  margin-bottom: 12px;
+}
+.contact-wrap .cf .err {
+  min-height: 1.1em;
+  margin-top: 2px;
+}
+.cp .cf label:nth-of-type(3) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-bottom: 2px;
+}
+.cp .cf label:nth-of-type(3) textarea {
+  flex: 1;
+  min-height: 96px;
+  resize: none;
+}
+
+/* Contact page: while its content fits the window, the page cannot be scrolled at all
+   (main.js adds .no-scroll). If the content is taller than the window, scrolling works as normal. */
+html.no-scroll {
+  overflow: hidden;
+}
+html.no-scroll body {
+  overflow: visible;
+}
+/* The status message ("Thank you!" / errors) hangs below the Send button without taking up layout space,
+   so the button itself stays exactly centered in the left column. */
+.cp-send .cf-status {
+  width: 100%;
+  height: 0;
+  min-height: 0;
+  margin: 0;
+  overflow: visible;
+  position: relative;
+  top: 18px;
+  text-align: center;
 }
