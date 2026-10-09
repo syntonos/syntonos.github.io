@@ -73,12 +73,12 @@ export const projects = [
     description:
       'VAMP is a Daisy Seed based digital sampler synth, with an onboard mic, pitch shifting sampling, and a few dozen digital effects. Custom PCB and firmware.',
     colors: ['#5b8fe8', '#b8a4ee'],
-    images: [],
-    // EXAMPLE gallery (three different shapes, to show the smart sizing). Replace with your own images.
+    images: ['/images/VAMP.png', '/images/VAMP-pcb.png', '/images/VAMP-schematic.png'],
+    cover: '/images/VAMP.png',
     gallery: [
-      { src: 'images/example-wide.svg', caption: 'A wide shot' },
-      { src: 'images/example-tall.svg', caption: 'A tall one' },
-      { src: 'images/example.svg', caption: 'And a regular one' },
+      { src: 'images/VAMP.png' },
+      { src: 'images/VAMP-pcb.png'},
+      { src: 'images/VAMP-schematic.png' },
     ],
     featured: true,
     scores: [
@@ -138,8 +138,6 @@ export const projects = [
     ],
     featured: true,
     skills: ['KiCad', 'C++', '3D printing', 'Embedded systems'],
-    wiki: site.wiki,
-    github: site.links.GitHub,
   },
   {
     slug: 'split-ortho',
@@ -164,8 +162,6 @@ export const projects = [
     ],
     featured: true,
     skills: ['Embedded systems', 'nRF52840', 'KiCad', 'QMK'],
-    wiki: site.wiki,
-    github: site.links.GitHub,
   },
   {
     slug: 'miniMP3',
@@ -232,8 +228,6 @@ export const projects = [
       },
     ],
     skills: ['Linear Algebra', 'Markov Chains', 'Python', 'numpy'],
-    wiki: site.wiki,
-    github: site.links.GitHub,
   },
   {
     slug: 'fdsc2300',
