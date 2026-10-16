@@ -53,7 +53,6 @@ export const resume = {
   experience: [
     ['Electrical Subteam, Cornell University Physical Intelligence', '2026 to Present'],
     ['JLCPCB Student Ambassador', '2026 to Present'],
-    ['R&D Intern, MAG Manufacturing', '2026'],
     ['Cornell Duffield Engineering Ambassador', '2026 to Present']
   ],
   education: [
