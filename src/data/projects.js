@@ -73,8 +73,8 @@ export const projects = [
     description:
       'VAMP is a Daisy Seed based digital sampler synth, with an onboard mic, pitch shifting sampling, and a few dozen digital effects. Custom PCB and firmware.',
     colors: ['#5b8fe8', '#b8a4ee'],
-    images: ['/images/VAMP.png', '/images/VAMP-pcb.png', '/images/VAMP-schematic.png'],
-    cover: '/images/VAMP.png',
+    images: ['/images/Hardware/VAMP/VAMP.png', '/images/Hardware/VAMP/VAMP-pcb.png', '/images/Hardware/VAMP/VAMP-schematic.png'],
+    cover: '/images/Hardware/VAMP/VAMP.png',
     gallery: [
       { src: 'images/Hardware/VAMP/VAMP.png' },
       { src: 'images/Hardware/VAMP/VAMP-pcb.png'},
