@@ -76,9 +76,9 @@ export const projects = [
     images: ['/images/VAMP.png', '/images/VAMP-pcb.png', '/images/VAMP-schematic.png'],
     cover: '/images/VAMP.png',
     gallery: [
-      { src: 'images/VAMP.png' },
-      { src: 'images/VAMP-pcb.png'},
-      { src: 'images/VAMP-schematic.png' },
+      { src: 'images/Hardware/VAMP/VAMP.png' },
+      { src: 'images/Hardware/VAMP/VAMP-pcb.png'},
+      { src: 'images/Hardware/VAMP/VAMP-schematic.png' },
     ],
     featured: true,
     scores: [
@@ -147,9 +147,9 @@ export const projects = [
     summary:
       'A tiny 46-key ortholinear split keyboard with a custom PCB, embedded design with the nRF52840 bare MCU. Designed for use with a phone, with custom keybinds and shortcuts. Designed in KiCad. Firmware with QMK.',
     colors: ['#f2b08c', '#e59fc0'],
-    images: ['/images/ortho-antenna.png'],
-    cover: ['/images/ortho-antenna.png'],
-    gallery: ['/images/ortho-antenna.png', '/images/ortho-pcb.png', '/images/ortho-schematic.png'],
+    images: ['/images/Hardware/ortho/ortho-antenna.png'],
+    cover: ['/images/Hardware/ortho/ortho-antenna.png'],
+    gallery: ['/images/Hardware/ortho/ortho-antenna.png', '/images/ortho-pcb.png', '/images/ortho-schematic.png'],
     scores: [
       { label: 'Fun', value: 7, note: 'I just like keyboards. And I have fun nuphy moss swtiches.' },
       { label: 'Usability', value: 9, note: 'Pretty fun to use!' },
@@ -169,9 +169,9 @@ export const projects = [
     title: 'miniMP3',
     year: 2025,
     colors: [],
-    images: ['/images/mp3-pcb-back.png'],
-    gallery: ['/images/mp3-3D.png', '/images/mp3-3D-2.png', '/images/mp3-pcb-back.png', '/images/mp3-pcb-front.png'],
-    cover: ['/images/mp3-pcb-back.png'],
+    images: ['/images/Hardware/miniMP3/mp3-pcb-back.png'],
+    gallery: ['/images/Hardware/miniMP3/mp3-3D.png', '/images/Hardware/miniMP3/mp3-3D-2.png', '/images/Hardware/miniMP3/mp3-pcb-back.png', '/images/Hardware/miniMP3/mp3-pcb-front.png'],
+    cover: ['/images/Hardware/miniMP3/mp3-pcb-back.png'],
     scores: [
       {
         label: 'Fun',
@@ -209,9 +209,9 @@ export const projects = [
     description:
       'A linear algebra presentation and python demonstration of Blackjack, as modeled as a Markov Decision Process, and how to actually win. A twenty minute presentation with a code demo, written in Python, using numpy and matplotlib.',
     colors: ['#8fb4ee', '#d9a9e6'],
-    images: ['/images/blackjack.png'],
-    cover: ['/images/blackjack.png'],
-    gallery: ['/images/blackjack.png'],
+    images: ['/images/Software/blackjack.png'],
+    cover: ['/images/Software/blackjack.png'],
+    gallery: ['/images/Software/blackjack.png'],
     featured: true,
     scores: [
       { label: 'Fun', value: 10, note: 'This was so incredibly fun to write and present. 10/10. I do still give this presentation occassionally, just for fun!' },
@@ -264,9 +264,9 @@ export const projects = [
     description:
       'Published professionally in OTHERSIDE Issue 3. The first short story I\'ve written, done in a fugue state during SP2026 finals week. Recursive trolley problems, Prometheus stories, and praying for a better ending. Love and obligation and choice.',
     colors: ['#e6a3cf', '#9bb8f0'],
-    cover: { src: '/images/otherside-coverart.webp' },
-    gallery: ['/images/otherside-issue3.webp'],
-    images: ['/images/otherside-issue3.webp'],
+    cover: { src: '/images/Arts/liturgy/otherside-coverart.webp' },
+    gallery: ['/images/Arts/liturgy/otherside-issue3.webp'],
+    images: ['/images/Arts/liturgy/otherside-issue3.webp'],
     featured: true,
     link: { label: 'Read it for free online!', url: 'https://othersidespec.com/pieces/field-notes-on-liturgical-rites-co-authored-li-and-albrecht/', home: true},
   },
@@ -278,9 +278,9 @@ export const projects = [
     summary:
       'Directed for Festival24, a 24-hour festival of four plays and one film, all created from scratch within one day; completely packed theater. I had so much fun. I had an incredible time, and I could not have asked for a better cast and crew. Thank you so much to Catherine, Lani, Devi, Crystal, Luke, and Alanna, and to our wonderful producers Bailey and Gwendolyn.',
     colors: ['#f0a98a', '#a7a2e6'],
-    imgaes: ['/images/festival24.png'],
-    cover: ['/images/festival24.png'],
-    gallery: ['/images/festival24.png'],
+    imgaes: ['/images/Arts/festival24.png'],
+    cover: ['/images/Arts/festival24.png'],
+    gallery: ['/images/Arts/festival24.png'],
     links: [
       { label: 'See more on Instagram', url: site.links.Instagram },
       { label: 'Program!', url: 'https://docs.google.com/document/d/1iBza2IfLlP_-688KPKO6I1lQ4yf7WmsAMPoCMyZlAyk/edit?usp=sharing'}
