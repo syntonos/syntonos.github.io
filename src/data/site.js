@@ -20,7 +20,7 @@ export const site = {
       fields: { email: 'entry.0000000000', name: 'entry.0000000001', message: 'entry.0000000002' },
     },
   },
-  wiki: 'https://wiki.minayeh.com',
+  wiki: 'https://minayeh.com/wiki',
   footer: '© Mina Yeh',
   about:
     'I believe adamantly in acting with universal human grace, exercising free will, and pursuing all the things of the universe with full-bodied curiosity. Currently leading FPGA CV and autonomy for Cornell University Physical Intelligence. Currently obsessed with exoskeletons, synthesizers, non-linearity, Taekwondo hurricane kicks, and learning how to better build community. Founding Jamboree Engineering @ Cornell for joyous, unconditionally open-access engineering.',
