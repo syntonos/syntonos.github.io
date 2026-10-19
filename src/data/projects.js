@@ -117,7 +117,7 @@ export const projects = [
     description:
       'Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.',
     colors: ['#e89ab6', '#a9b7f0'],
-    images: [/Images/Hardware/CAN/can-schematic.png],
+    images: ['/images/Hardware/CAN/can-schematic.png'],
     scores: [
       { label: 'Fun', value: 3, note: 'Fairly useful, but not particularly riveting.' },
       {
