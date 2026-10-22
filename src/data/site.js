@@ -2,7 +2,7 @@
 export const site = {
   name: 'Mina Yeh',
   nameLines: ['Mina', 'Yeh'], // how the big cover title breaks on phones
-  subtitle: 'ECE @ Cornell. I can make anything. [SITE IN PROGRESS...IMPORTING PROJECTS]',
+  subtitle: 'ECE Junior @ Cornell. I can make anything. [SITE IN PROGRESS...IMPORTING PROJECTS]',
   email: 'minayeh1347@gmail.com',
   // Contact page, a wrapper around a Google Form: the visitor fills in this site's own form and the answers
   // are sent to your Google Form (and appear in its Responses tab / linked sheet). Setup, once:
