@@ -112,6 +112,7 @@ export function createPlane(state) {
   let L = 1,
     Y0 = 0,
     Y1 = 1;
+  let active = false; // false while there are no projects in Selected work
 
   // Try the 3D plane; fall back to the flat one if WebGL is missing or the GPU context is lost.
   let model;
@@ -141,7 +142,10 @@ export function createPlane(state) {
     const h2 = $('#wh'),
       ps = $$('.proj'),
       en = $('#end');
-    if (!ps.length) return;
+    // no featured projects: nothing to fly through, so hide the plane and its path
+    active = ps.length > 0;
+    plane.style.display = active ? '' : 'none';
+    if (!active) return tp.setAttribute('d', '');
     const lp = ps[ps.length - 1];
     // start: halfway between SELECTED WORK and the first project
     Y0 = (h2.offsetTop + h2.offsetHeight + ps[0].offsetTop) / 2;
@@ -172,6 +176,7 @@ export function createPlane(state) {
   }
 
   function update() {
+    if (!active) return;
     const y = scrollY,
       vh = innerHeight;
     const r = work.getBoundingClientRect();

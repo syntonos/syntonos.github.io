@@ -1,12 +1,13 @@
 /**
  * Subpage templates: category pages, project pages, awards and resume.
- * `renderPage(routeParts)` returns the HTML string for the current route.
+ * `renderPage(routeParts, params)` returns the HTML string for the current route
+ * (`params` = the bit after ? in the address, e.g. #/hardware?tag=KiCad gives { tag: 'KiCad' }).
  */
 import { site } from '../data/site.js';
 import { categories, projects, scoreLabels } from '../data/projects.js';
 import { awards, resume } from '../data/pages.js';
 import { asset } from './dom.js';
-import { coverOf, galleryOf, tileBg } from './media.js';
+import { coverOf, galleryOf, imgTag, tileBg } from './media.js';
 import { carouselHTML } from './carousel.js';
 import { projectBody, renderMarkdown } from './markdown.js';
 import { projectLinks, linkHTML } from './links.js';
@@ -27,19 +28,16 @@ const items = (list) =>
 function tile(p, style = '') {
   const angle = 120 + inCategory(p.category).indexOf(p) * 25; // varies the gradient per tile
   const imgs = coverOf(p); // the project's `cover` if it has one, otherwise its home-page images
-  // every image is stacked in the tile; setupTileCycling() (media.js) fades through them on hover
+  // every picture is stacked in the tile; setupTileCycling() (media.js) fades through them on hover
   const pics = imgs
-    .map(
-      (im, j) =>
-        `<img class="${j ? '' : 'on'}" src="${asset(im.src)}" alt="${String(im.alt).replace(/"/g, '&quot;')}">`,
-    )
+    .map((im, j) => imgTag(im.src, im.alt, { cls: j ? '' : 'on', sizes: '(max-width: 760px) 50vw, 300px' }))
     .join('');
   const ti = imgs.length
     ? `<div class="ti has-img">${pics}</div>`
     : `<div class="ti" style="${tileBg(p, angle)}"></div>`;
   return `<a class="tile" href="#/${p.category}/${p.slug}" style="${style}">
     ${ti}
-    <b>${p.title}</b><small>${categories[p.category].title}, ${p.year}</small></a>`;
+    <b>${p.title}</b><small>${[categories[p.category].title, p.year].filter(Boolean).join(', ')}</small></a>`;
 }
 
 /**
@@ -62,10 +60,37 @@ function tileSize(p) {
   return m ? { w: Math.min(4, Math.max(1, +m[1])), h: Math.min(3, Math.max(1, +m[2])) } : null;
 }
 
-function categoryPage(key) {
+/**
+ * The row of filter links under the category title: "All" plus every tag used in the category
+ * (a project's `tags`, or its `skills` if it has no tags). The chosen tag is kept in the address (?tag=KiCad).
+ */
+function tagBar(key, list, active) {
+  const counts = new Map(); // lowercase tag -> { label, count }
+  list.forEach((p) =>
+    (p.tags || []).forEach((t) => {
+      const e = counts.get(t.toLowerCase()) || { label: t, count: 0 };
+      e.count++;
+      counts.set(t.toLowerCase(), e);
+    }),
+  );
+  if (list.length < 2 || !counts.size) return '';
+  const tags = [...counts.entries()].sort(
+    (a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label),
+  );
+  const link = (href, label, on) => `<a class="${on ? 'on' : ''}" href="${href}">${label}</a>`;
+  return `<nav class="tags" aria-label="Filter by skill">${link(`#/${key}`, 'All', !active)}${tags
+    .map(([k, e]) => link(`#/${key}?tag=${encodeURIComponent(e.label)}`, e.label, k === active))
+    .join('')}</nav>`;
+}
+
+function categoryPage(key, params = {}) {
   const { title, blurb } = categories[key];
-  const items = inCategory(key);
-  let html = `<h1 class="pt">${title}</h1><p class="lead">${blurb}</p>`;
+  const all = inCategory(key);
+  const active = (params.tag || '').toLowerCase();
+  const items = active ? all.filter((p) => (p.tags || []).some((t) => t.toLowerCase() === active)) : all;
+  let html = `<h1 class="pt">${title}</h1><p class="lead">${blurb}</p>${tagBar(key, all, active)}`;
+  if (!all.length) return html + '<p class="body">Projects coming soon.</p>';
+  if (!items.length) return html + '<p class="body">Nothing here with that tag.</p>';
   // If any project in this category has a `size`, tiles use exactly the sizes you chose (projects
   // without one are 1x1) and the grid packs them together. Otherwise the automatic layout below is used.
   if (items.some((p) => p.size)) {
@@ -80,7 +105,7 @@ function categoryPage(key) {
   for (let b = 0; b * 4 < items.length; b++) {
     html += `<div class="blk v${b % 3}">${items
       .slice(b * 4, b * 4 + 4)
-      .map(tile)
+      .map((p) => tile(p))
       .join('')}</div>`;
   }
   return html;
@@ -117,6 +142,18 @@ function projectPage(categoryKey, slug) {
     ? `<div class="lk${allLinks.length <= 3 ? ' few' : ''}">${allLinks.map(linkHTML).join('')}</div>`
     : '';
 
+  // Previous / next project in this category's order
+  const siblings = inCategory(categoryKey);
+  const at = siblings.indexOf(p);
+  const prev = siblings[at - 1];
+  const after = siblings[at + 1];
+  const stepLink = (q, label) =>
+    q ? `<small>${label}</small><a class="ul" href="#/${q.category}/${q.slug}">${q.title}</a>` : '';
+  const prevNext =
+    siblings.length > 1
+      ? `<div class="pn"><div>${stepLink(prev, 'Previous')}</div><div class="r">${stepLink(after, 'Next')}</div></div>`
+      : '';
+
   // "Next up": three random other projects, from any category
   const next = projects
     .filter((q) => q !== p)
@@ -124,7 +161,7 @@ function projectPage(categoryKey, slug) {
     .slice(0, 3);
 
   // Description on the left and an image carousel on the right, if the project has a `gallery`
-  const body = `<div class="md">${renderMarkdown(projectBody(p))}</div>`;
+  const body = `<div class="md">${renderMarkdown(projectBody(p), p)}</div>`;
   const gallery = galleryOf(p);
   // The description, skills and links form one text column, so skills and links sit right under the
   // description (with a little space) no matter how tall the carousel is.
@@ -134,9 +171,10 @@ function projectPage(categoryKey, slug) {
   return `
     ${backLink('#/' + categoryKey, categories[categoryKey].title)}
     <h1 class="pt">${p.title}</h1>
-    <p class="meta">${categories[categoryKey].title}, ${p.year}</p>
+    <p class="meta">${[categories[categoryKey].title, p.year].filter(Boolean).join(', ')}</p>
     ${scoreBoxes}
     ${content}
+    ${prevNext}
     <h2 class="h3" style="margin-top:84px">Next up</h2>
     <div class="sug">${next.map(tile).join('')}</div>`;
 }
@@ -219,9 +257,9 @@ function contactPage() {
 
 // ---------- router entry ----------
 /** @param {string[]} parts route parts, e.g. ['hardware', 'bench-power-supply'] */
-export function renderPage(parts) {
+export function renderPage(parts, params = {}) {
   const [first, second] = parts;
-  if (categories[first]) return second ? projectPage(first, second) : categoryPage(first);
+  if (categories[first]) return second ? projectPage(first, second) : categoryPage(first, params);
   if (first === 'awards') return awardsPage();
   if (first === 'resume') return resumePage();
   if (first === 'contact') return contactPage();

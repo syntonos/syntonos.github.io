@@ -257,6 +257,7 @@ h3 {
     0 1px 3px rgba(20, 40, 100, 0.45);
 }
 #hero .sub {
+  white-space: pre-line; /* each line of the subtitle (site.js) is shown on its own line */
   display: inline-block;
   margin: 16px 0 0;
   font-family: 'Instrument Serif', Georgia, serif;
@@ -1524,7 +1525,7 @@ button.rz {
   transition: height 0.35s ease;
   touch-action: pan-y;
 }
-.car-stage img {
+.car-stage .slide {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1536,8 +1537,19 @@ button.rz {
   user-select: none;
   -webkit-user-drag: none;
 }
-.car-stage img.on {
+.car-stage .slide.on {
   opacity: 1;
+}
+.car-stage .slide:not(.on) {
+  pointer-events: none; /* a hidden video or player must not catch clicks */
+}
+/* video and YouTube / Vimeo players */
+.car-stage iframe.slide,
+.car-stage video.slide {
+  border: 0;
+  border-radius: 4px;
+  background: #000;
+  object-fit: contain;
 }
 .car-cap {
   min-height: 1.4em;
@@ -1675,4 +1687,67 @@ html.no-scroll body {
   position: relative;
   top: 18px;
   text-align: center;
+}
+
+/* ================================================================
+   11. TAG FILTER, PREVIOUS / NEXT, EMPTY NOTE
+   ================================================================ */
+
+/* Category page: filter links under the title (a project's tags, or its skills) */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 0 0 28px;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tags a {
+  padding-bottom: 3px;
+  border-bottom: 3px solid transparent;
+  opacity: 0.55;
+  transition: 0.25s;
+}
+.tags a:hover {
+  opacity: 1;
+  color: var(--cf);
+}
+.tags a.on {
+  opacity: 1;
+  border-bottom-color: #f8cdd7; /* the same pink as the links */
+}
+
+/* Project page: previous / next project in the same category */
+.pn {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 56px;
+}
+.pn > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.pn > .r {
+  align-items: flex-end;
+  text-align: right;
+}
+.pn small {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.pn a {
+  font-size: 1.2rem;
+}
+
+/* Shown on the home page while no project is featured yet */
+.empty-note {
+  text-align: center;
+  margin: 0 0 30vh;
+  opacity: 0.6;
 }

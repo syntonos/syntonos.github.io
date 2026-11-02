@@ -1,85 +1,88 @@
 # Personal site
 
-Vite + vanilla JS. No framework. All your content lives in `src/data/`, so day-to-day edits never touch the code.
+Vite + vanilla JS. No framework. Your **words and pictures** live in `content/` and `public/images/`, and your **site-wide settings** in `src/data/`, so day-to-day edits never touch the code.
 
 ## Quick start
 
     npm install
-    npm run dev        # local dev server with hot reload
-    npm run build      # production build into dist/
+    npm run dev        # local dev server with hot reload (reloads when you edit a project file or add a picture)
+    npm run build      # checks your content, then builds the site into dist/
     npm run preview    # preview the production build
     npm run format     # tidy code formatting (Prettier)
 
-Requires Node 18+.
+Requires Node 20.19+ (or 22.12+).
 
 ## Where things live
 
-| File | What it controls |
+| Where | What it is |
 | --- | --- |
-| `src/data/site.js` | Your name, subtitle, email, social links, wiki URL, about text, footer, menu and bottom links |
-| `src/data/projects.js` | Categories and every project (this is where you add entries) |
+| `content/projects/<category>/<project>.md` | **One file per project**: settings at the top, your write-up below |
+| `content/projects/<category>/_category.md` | A category's title, short description and order |
+| `content/projects/_template.md` | Copy this to start a project: it lists every setting |
+| `public/images/<category>/<project>/` | That project's pictures (and clips). Also put `resume.pdf` in `public/` |
+| `src/data/site.js` | Your name, cover subtitle, email, social links, wiki, about text, menu links, contact form |
 | `src/data/pages.js` | Awards and Resume pages |
 | `src/style.css` | All styling (colors, fonts, spacing) |
-| `src/lib/sky.js` | The procedural cover sky/haze |
-| `src/lib/plane.js` | The 3D paper plane and its winding path |
-| `src/lib/pages.js` | Category, project, awards and resume page templates |
-| `src/lib/markdown.js`, `src/lib/media.js` | Markdown rendering; image stack and tile helpers |
-| `src/content/projects/` | Optional `<slug>.md` files with long project write-ups |
-| `index.html` | Page skeleton and Google Fonts link |
-| `public/` | Static files: put images and your `resume.pdf` here |
+| `vite-plugins/content.js` | Reads and checks the project files, and makes the smaller copies of your pictures |
+| `src/lib/*.js` | The page templates, carousel, plane, sky and so on |
 
 ## Add a project
 
-Open `src/data/projects.js`, copy an existing entry, and change it. Every project gets its own page at `#/<category>/<slug>`. The comment at the top of that file explains each field.
+1. Make a folder for its pictures: `public/images/hardware/my-new-thing/` and drop the pictures in.
+2. Copy `content/projects/_template.md` to `content/projects/hardware/my-new-thing.md`. The file name becomes the web address (`#/hardware/my-new-thing`), so use lowercase-with-dashes.
+3. Fill in the settings at the top (only `title` and `year` are required, plus a `summary` or a write-up) and write the description below the second `---`. Delete the settings you don't need.
+4. Run `npm run dev` and look at it. Run `npm run build` before publishing: it checks every project file.
 
-    {
-      slug: 'my-new-thing',          // unique, lowercase-with-dashes
-      category: 'hardware',          // hardware | software | arts
-      title: 'My new thing',
-      year: 2026,
-      summary: 'One or two lines for the home page.',
-      description: 'Optional. **Markdown** for the project page.',
-      colors: ['#5b8fe8', '#b8a4ee'],          // gradient used until you add images
-      images: ['images/a.jpg', 'images/b.jpg'],  // optional, files in public/images
-      featured: true,                // show in "Selected work" on the home page
-      scores: [                      // optional: your own X/10 boxes for this project
-        { label: 'Fun', value: 8, note: 'Shown on hover or tap.' },
-        { label: 'Battery life', value: 6, note: 'Any label you like.' },
-      ],
-      skills: ['KiCad', 'C++'],      // optional
-      wiki: site.wiki,               // optional
-      github: 'https://github.com/you/repo',  // optional
-    },
+In the settings, pictures are just file names (`images: [front.jpg, back.jpg]`). The site looks for them in that project's own folder. In the write-up, use `![A caption](front.jpg)` the same way.
 
-Anything you leave out is simply not shown (that is how the Arts pages skip the score boxes, skills and wiki/GitHub links; they use a single `link` instead).
+## Settings reference
 
-Category pages lay projects out in blocks of 4 (a 2x2 tile plus three smaller ones, alternating layouts), so adding a 5th project starts a new block.
+| Setting | What it does |
+| --- | --- |
+| `title`, `year` (or `date: 2026-03-14`) | Required. The year is shown next to the category |
+| `summary` | A line or two for the home page. Also used as the description if there is no write-up |
+| `order` | Place in its category (1 = first). Without it, projects are sorted newest first |
+| `featured`, `featuredOrder` | `featured: true` shows it in Selected work on the home page, in `featuredOrder` order |
+| `draft: true` | Hides the project on the real site. In `npm run dev` it still shows, marked "(draft)" |
+| `images` | The pictures that rotate on the home page (any number) |
+| `cover` | The tile on the category page, if it should differ from `images` (one name, or a list that fades through on hover) |
+| `gallery` | The slide carousel on the project page: write-up on the left, slides on the right. Pictures, YouTube/Vimeo links, or short clips (see below) |
+| `colors` | Two colors for the gradient shown while a project has no pictures |
+| `size` | The tile's size on the category page as columns x rows (`2x2`, `2x1`, `1x2`, `3x2`...; width 1-4, height 1-3). If any project in a category has a size, that category uses your sizes (the rest are `1x1`); if none do, the automatic layout is used |
+| `tags` | The filter links on the category page. Leave out to use `skills` |
+| `scores` | The X/10 boxes: a list of `label`, `value` and an optional hover `note` |
+| `skills` | The dotted line under the write-up (also used as tags) |
+| `wiki`, `github` | Links. Write an address, or `true` to use the one from `site.js` |
+| `links` | As many extra links as you like (`label`, `url`, and `home: true` to also show it on the home page). `linksOnHome: true` shows all of a project's links there |
 
-## Project descriptions: markdown and images
+## Pictures
 
-The text on a project page is markdown. It comes from, in priority order:
+- **Folders:** `public/images/<category>/<project>/`. Use any file names; avoid spaces if you can.
+- **Resized automatically:** when you run `npm run build`, every JPG and PNG gets smaller WebP copies (480, 960 and 1600 px wide) in the built site, and each visitor's browser downloads only the size it needs. Your originals are untouched and still used as the fallback. Transparent PNGs stay transparent. (In `npm run dev` the originals are used.)
+- **Nothing is cropped:** each picture is shown whole, in a box sized to fit it.
+- **Videos in the gallery:** add `- video: https://www.youtube.com/watch?v=...` (or a Vimeo link) for an embedded player, or `- video: demo.mp4` for a short clip you put in the project's picture folder (it plays muted, on a loop). Only the slide in view plays.
+- **Home page:** one picture shows at a time and they fade to the next every few seconds (`ROTATE_EVERY` in `src/lib/home.js`), pausing while the mouse is over them. A click or tap moves on.
 
-1. a file `src/content/projects/<slug>.md` (best for long write-ups; see `_example.md` there)
-2. the `description` field in `projects.js` (fine for short text)
-3. the `summary` field, if there is no description at all
+## Categories
 
-Headings, lists, links, bold/italic, block quotes, code and tables all work. To add an image, put the file in `public/images/` and write:
+A category is a folder in `content/projects/`. To add one, create the folder (lowercase), put a `_category.md` in it:
 
-    ![Caption or alt text](images/photo.jpg)
+    ---
+    title: Photography
+    blurb: A short line shown under the title.
+    order: 4
+    ---
 
-Markdown is written by you, so it is not sanitised. Only paste content you trust.
+then add its pictures folder `public/images/photography/`, and add a link to `nav` in `src/data/site.js` if you want it in the menu.
 
-## Home page image stacks
+## What the build checks
 
-List any number of images in a project's `images` (1, 2, 3 or more). On the home page one image shows at a time. With two or more they fade from one to the next every few seconds (`ROTATE_EVERY` in `src/lib/home.js`), pause while the mouse is over them, and a click or tap moves to the next one. Each image keeps its own proportions, so nothing is cropped, and the box resizes to fit the tallest one (very tall images are capped at 68% of the screen height). A picture with a transparent background stays transparent: nothing is painted behind it. Each image can be a path string or `{ src: 'images/a.jpg', alt: 'what it shows' }`.
+`npm run build` stops with a plain list of problems if a project file has: a misspelled setting (it suggests the right one), a missing `title` or `year`, a bad `size` or `colors`, a score outside 0-10, a link that doesn't start with `https://`, a picture that is not in the project's folder, or a file name that is not lowercase-with-dashes. Fix them and run it again. In `npm run dev` the same message appears on the page.
 
-Tiles on the category pages have fixed shapes, so they crop the first image to fill the tile.
+## Cover subtitle
 
-## Add a category
+In `src/data/site.js`, `subtitle` is a list. Every item is its own line, so you decide where the breaks go (a long line can still wrap by itself on a narrow phone). A single string works too.
 
-1. Add a key in `categories` (`src/data/projects.js`), for example `photography: { title: 'Photography', blurb: '...' }`.
-2. Give projects `category: 'photography'`.
-3. Add `{ label: 'Photography', href: '#/photography', menu: true, footer: true }` to `nav` in `src/data/site.js`.
 
 ## Resume PDF
 
@@ -98,18 +101,6 @@ The site uses URL hashes for routing (`#/hardware`), so no server configuration 
 - The warm "night light" is the `.warm` layer in `src/style.css` (look for `#skywrap .warm`). It only covers the sky, never the text. Lower the G/B values in its gradient for a stronger effect.
 - The gull cutouts in the top-right are a mask layer on `#skywrap` (the long `url("data:image/svg+xml...")`). Their size and position are `mask-size` / `mask-position` right below it.
 - The favicon is `public/favicon.svg` (and `public/apple-touch-icon.png` for iOS).
-
-## Notes
-
-- Fonts (Bodoni Moda, Noto Serif, Instrument Serif) load from Google Fonts in `index.html`.
-- three.js is pinned to `0.128.0` so the paper plane's lighting matches the design. Newer versions change how light intensity is calculated.
-
-
-## Project links, home-page links, resumes and the contact page
-
-- **Links:** a project can have as many links as you want. Use `wiki` and `github` for those two, and `links: [{ label, url }, ...]` for any others. Add `home: true` to a link to also show it on the home page under that project, or `linksOnHome: true` on the project to show all of its links there.
-- **Resumes:** `pdfs` in `src/data/pages.js` holds one or two download buttons. Put the PDFs in `public/`.
-- **Contact:** `#/contact` has a name, email (checked for a valid address) and message form that sends its answers to a Google Form. See "Setting up the contact form" below. Until that is done, the form falls back to opening the visitor's email app (`mailto:`).
 
 ## Setting up the contact form (Google Form)
 
@@ -134,10 +125,8 @@ The contact page is a wrapper: the visitor fills in this site's own form, and th
 
 The paper plane in "Selected work" is a 3D model (WebGL). If a browser can't create a WebGL context (for example, hardware acceleration is switched off), the site automatically uses a flat 2D paper plane with the same white and grey facets instead. The dotted path and the movement are the same, and nothing else on the site is affected.
 
-## Cover images, image carousel and tile sizes
+## Notes
 
-All three are optional fields on a project in `src/data/projects.js` (the comment at the top of that file lists every field):
-
-- **`cover`**: the picture for the project's tile on the category page, if it should differ from the home-page `images`. A path, `{ src, alt }`, or a list of pictures that fade through on hover.
-- **`gallery`**: pictures for a carousel on the project page. The page becomes two columns, with the description on the left and the carousel on the right. Each picture is shown whole in a box that resizes to fit it, with arrows, dots, swiping and the arrow keys. Add a `caption` to any picture (`{ src: 'images/a.jpg', caption: 'Front view' }`). On phones the carousel sits below the text.
-- **`size`**: how big the project's block is on the category page, as columns x rows: `'2x2'`, `'2x1'`, `'1x2'`, `'1x1'`, `'3x2'`, `'4x1'`... Width can be 1 to 4 and height 1 to 3. If any project in a category has a `size`, that category uses your sizes (projects without one are `'1x1'`) and the tiles pack together. If none do, the automatic layout is used. On phones the grid has two columns, so widths above 2 become 2.
+- Fonts (Bodoni Moda, Noto Serif, Instrument Serif) load from Google Fonts in `index.html`.
+- three.js is pinned to `0.128.0` so the paper plane's lighting matches the design. Newer versions change how light intensity is calculated.
+- Projects without any picture, or a site with no projects yet, show a "Projects coming soon" note instead of breaking.

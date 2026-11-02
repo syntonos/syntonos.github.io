@@ -1,14 +1,18 @@
+/**
+ * The site's projects. They are NOT written here any more: each project is one file in
+ *
+ *   content/projects/<category>/<project>.md      (settings at the top, the write-up below)
+ *   content/projects/<category>/_category.md      (the category's title, blurb and order)
+ *
+ * and its pictures go in public/images/<category>/<project>/. Copy content/projects/_template.md to start a new
+ * project (it lists every setting). The build plugin (vite-plugins/content.js) reads those files, checks them and
+ * hands them over as `virtual:content`; this file only tidies them up for the pages.
+ */
 import { site } from './site.js';
-// ---------------------------------------------------------------
-// CATEGORIES: add a new key here to get a new category page.
-// (Also add it to `nav` in site.js if you want it in the menu.)
-// ---------------------------------------------------------------
-export const categories = {
-  hardware: { title: 'Hardware', blurb: 'Embedded, FPGA, ASIC, Power Systems.' },
-  software: { title: 'Software', blurb: '' },
-  arts: { title: 'Arts', blurb: '' },
-};
+import { categories, projects as rawProjects } from 'virtual:content';
+import { resolveRef } from '../lib/resolve-image.js';
 
+export { categories };
 
 // Default labels/notes, used only by projects that give `scores` as { fun, usability, subjective, objective }
 // (optionally with `scoreNotes: { fun: '...' }` to override the hover text).
@@ -23,285 +27,43 @@ export const scoreLabels = [
   ],
 ];
 
-// ---------------------------------------------------------------
-// PROJECTS: copy any entry below to add a project. Fields:
-//   slug         unique id used in the URL (#/hardware/my-slug)
-//   category     a key from `categories`
-//   title, year
-//   summary      short teaser, shown on the home page
-//   description  optional, MARKDOWN (headings, lists, links, images...).
-//                If you leave it out, `summary` is used instead.
-//                For long write-ups, create src/content/projects/<slug>.md
-//                instead (it takes priority over this field).
-//   colors       two colors for the gradient placeholder
-//   images       optional. Files in /public/images, e.g. ['images/a.jpg'].
-//                Use 1, 2, 3+ images: they are stacked on the home page and
-//                cycle on hover/tap. Each keeps its own proportions.
-//                Can also be { src: 'images/a.jpg', alt: 'describe it' }.
-//   cover        optional. The picture for this project's tile on the category page, if you want it
-//                to differ from the home-page `images`: a path, { src, alt }, or a list (a list
-//                fades through the pictures on hover). Without it, `images` are used.
-//   gallery      optional. Images for the carousel on the project page (description left, carousel
-//                right, each picture shown whole in a box sized to it). Items can be a path or
-//                { src, alt, caption }. Without it, the description takes the full width.
-//   size         optional. How big this project's block is on the category page: 'WxH' = columns x rows,
-//                width 1-4, height 1-3, e.g. '2x2', '2x1', '1x2', '1x1', '3x2', '4x1'.
-//                If ANY project in a category has a size, that category uses your sizes (projects
-//                without one are '1x1'). If none do, the automatic layout is used.
-//   featured     true = shown in "Selected work" on the home page
-//   scores       optional, your own X/10 boxes for this project. A list of
-//                { label, value, note }: label = box title, value = 0-10,
-//                note = text shown on hover/tap (optional). Use any labels and
-//                as many boxes as you like (4 fits best).
-//   skills       optional list, shown dot-separated
-//   wiki, github optional links (leave out to hide)
-//   links        optional, as many extra links as you like:
-//                  links: [{ label: 'Demo video', url: 'https://...', home: true }, { label: 'Paper', url: '...' }]
-//                `home: true` also shows that link on the home page, under the project's text.
-//   linksOnHome  optional, true = show ALL of this project's links on the home page
-//   link         optional single extra link { label, url } (same as one entry in `links`)
-// Anything you omit is simply not shown. Tiles fill in blocks of 4.
-// ---------------------------------------------------------------
-export const projects = [
-  {
-    slug: 'vamp',
-    category: 'hardware',
-    title: 'VAMP (A Sampler Synth)',
-    year: 2026,
-    summary:
-      'VAMP is a Daisy Seed based digital sampler synth, with an onboard mic, pitch shifting sampling, and a few dozen digital effects. Custom PCB and firmware. Designed in KiCad.',
-    description:
-      'VAMP is a Daisy Seed based digital sampler synth, with an onboard mic, pitch shifting sampling, and a few dozen digital effects. Custom PCB and firmware.',
-    colors: ['#5b8fe8', '#b8a4ee'],
-    images: ['/images/Hardware/VAMP/VAMP.png', '/images/Hardware/VAMP/VAMP-pcb.png', '/images/Hardware/VAMP/VAMP-schematic.png'],
-    cover: '/images/Hardware/VAMP/VAMP.png',
-    gallery: [
-      { src: 'images/Hardware/VAMP/VAMP.png' },
-      { src: 'images/Hardware/VAMP/VAMP-pcb.png'},
-      { src: 'images/Hardware/VAMP/VAMP-schematic.png' },
-    ],
-    featured: true,
-    scores: [
-      {
-        label: 'Fun',
-        value: 8,
-        note: '',
-      },
-      {
-        label: 'Usability',
-        value: 6,
-        note: '',
-      },
-      { label: 'Difficulty (Subjective)', value: 7, note: '' },
-      {
-        label: 'Difficulty (Objective)',
-        value: 7,
-        note: '',
-      },
-    ],
-    skills: ['Soldering', 'KiCad', 'C++', '3D printing'],
-    wiki: site.wiki,
-    github: site.links.GitHub,
-  },
-  {
-    slug: 'cupi-can',
-    category: 'hardware',
-    title: 'CUPI CAN Board + Firmware Stack (Autonomous Hexapod)',
-    year: 2023,
-    summary:
-      'Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.',
-    description:
-      'Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.',
-    colors: ['#e89ab6', '#a9b7f0'],
-    images: ['/images/Hardware/CAN/can-schematic.png'],
-    scores: [
-      { label: 'Fun', value: 3, note: 'Fairly useful, but not particularly riveting.' },
-      {
-        label: 'Usability',
-        value: 10,
-        note: 'Extremely useful and reusable. Most robotics and exoskeletons use CAN communication, and require conversion between different communication protocols.',
-      },
-      {
-        label: 'Difficulty (Subjective)',
-        value: 3,
-        note: 'Not that bad. I feel like I\'ve just done this a lot recently.',
-      },
-      {
-        label: 'Difficulty (Objective)',
-        value: 4,
-        note: 'Not that bad.',
-      },
-    ],
-    featured: true,
-    skills: ['KiCad', 'C++', '3D printing', 'Embedded systems'],
-  },
-    {
-    slug: 'riscv',
-    category: 'hardware',
-    title: 'Single Cycle RISC-V Processor',
-    year: 2020,
-    summary:
-      'Designed from scratch in Verilog/SystemVerilog, implementing the datapath and control logic. Verified with full written testbench in assembly and HDL; analyzed critical-path timing, synthesis results, and resource utilization in Quartus.',
-    colors: ['#f2b08c', '#e59fc0'],
-    scores: [
-      { label: 'Fun', value: 3, note: 'I would rather make things. It was fun watching it finally work!' },
-      { label: 'Usability', value: 5, note: 'An interesting look into FPGAs, unfortunately I\'m sticking to my computer.' },
-      { label: 'Difficulty (Subjective)', 
-        value: 8, note: 'There was one tiny flaw in the register file that created hours of troubleshooting work. Drove me completely insane.' },
-      {
-        label: 'Difficulty (Objective)',
-        value: 7,
-        note: 'Difficult, but very modular, and a good learning project.'
-      },
-    ],
-    featured: true,
-    skills: ['FPGA', 'Verilog', 'Quartus', 'Assembly'],
-  },
-  {
-    slug: 'split-ortho',
-    category: 'hardware',
-    title: 'Split Ortho Keyboard',
-    year: 2020,
-    summary:
-      'A tiny 46-key ortholinear split keyboard with a custom PCB, embedded design with the nRF52840 bare MCU. Designed for use with a phone, with custom keybinds and shortcuts. Designed in KiCad. Firmware with QMK.',
-    colors: ['#f2b08c', '#e59fc0'],
-    images: ['/images/Hardware/ortho/ortho-antenna.png'],
-    cover: ['/images/Hardware/ortho/ortho-antenna.png'],
-    gallery: ['/images/Hardware/ortho/ortho-antenna.png', '/images/ortho-pcb.png', '/images/ortho-schematic.png'],
-    scores: [
-      { label: 'Fun', value: 7, note: 'I just like keyboards. And I have fun nuphy moss swtiches.' },
-      { label: 'Usability', value: 9, note: 'Pretty fun to use!' },
-      { label: 'Difficulty (Subjective)', value: 6, note: 'Using the Bare nRF52840 MCU was a fair bit harder than using a devboard, especially for antenna matching.' },
-      {
-        label: 'Difficulty (Objective)',
-        value: 6,
-        note: 'Probably use a devboard instead.',
-      },
-    ],
-    featured: true,
-    skills: ['Embedded systems', 'nRF52840', 'KiCad', 'QMK'],
-  },
-  {
-    slug: 'miniMP3',
-    category: 'hardware',
-    title: 'miniMP3',
-    year: 2025,
-    colors: [],
-    images: ['/images/Hardware/miniMP3/mp3-pcb-back.png'],
-    gallery: ['/images/Hardware/miniMP3/mp3-3D.png', '/images/Hardware/miniMP3/mp3-3D-2.png', '/images/Hardware/miniMP3/mp3-pcb-back.png', '/images/Hardware/miniMP3/mp3-pcb-front.png'],
-    cover: ['/images/Hardware/miniMP3/mp3-pcb-back.png'],
-    scores: [
-      {
-        label: 'Fun',
-        value: 8,
-        note: 'Honestly just a fun tiling challenge; it reminded me of a lot of puzzle? games? Routing differential pairs under these conditions was not fun though.',
-      },
-      {
-        label: 'Usability',
-        value: 10,
-        note: 'It\'s an MP3 player! And it\'s incredibly compact.',
-      },
-      {
-        label: 'Difficulty (Subjective)',
-        value: 4,
-        note: 'Not that complex. Baby\'s third? Electronics project.',
-      },
-      {
-        label: 'Difficulty (Objective)',
-        value: 4,
-        note: 'Good project for learning more PCB design. Firmware is a bit tricky though.',
-      },
-    ],
-    skills: ['Embedded', 'KiCad', 'C++', 'Firmware'],
-    featured: false,
-    wiki: site.wiki,
-    github: 'https://github.com/syntonos/miniMP3',
-  },
-  {
-    slug: 'blackjack',
-    category: 'software',
-    title: 'Blackjack, Modeled as a Markov Decision Process',
-    year: 2025,
-    summary:
-      'A linear algebra presentation and python demonstration of Blackjack, as modeled as a Markov Decision Process + how to actually win.',
-    description:
-      'A linear algebra presentation and python demonstration of Blackjack, as modeled as a Markov Decision Process, and how to actually win. A twenty minute presentation with a code demo, written in Python, using numpy and matplotlib.',
-    colors: ['#8fb4ee', '#d9a9e6'],
-    images: ['/images/Software/blackjack.png'],
-    cover: ['/images/Software/blackjack.png'],
-    gallery: ['/images/Software/blackjack.png'],
-    featured: true,
-    scores: [
-      { label: 'Fun', value: 10, note: 'This was so incredibly fun to write and present. 10/10. I do still give this presentation occassionally, just for fun!' },
-      { label: 'Usability', value: 10, note: 'If and only if you do end up going to Vegas. Otherwise, closer to 0.' },
-      {
-        label: 'Difficulty (Subjective)',
-        value: 7,
-        note: 'Difficult for me to visualize the process, and I don\'t think I went about it the usual way. Also done in high school, when I was much less experienced. I also basically learned how to use python in two hours for this.',
-      },
-      {
-        label: 'Difficulty (Objective)',
-        value: 5,
-        note: 'A fairly interesting application of linear algebra! Straightforward if your fundamentals are solid.',
-      },
-    ],
-    skills: ['Linear Algebra', 'Markov Chains', 'Python', 'numpy'],
-  },
-  {
-    slug: 'fdsc2300',
-    category: 'software',
-    title: 'FDSC 2300: Culinary Science Website',
-    year: 2026,
-    colors: ['#b7a4e8', '#f0a9b8'],
-    images: [],
-    scores: [
-      { label: 'Fun', value: 5, note: 'I really love design, and I really loved the class, and I really hate frontend.' },
-      { label: 'Usability', value: 10, note: 'Used right now for the Cornell Culinary Science Course.' },
-      {
-        label: 'Difficulty (Subjective)',
-        value: 7,
-        note: 'Frontend!',
-      },
-      {
-        label: 'Difficulty (Objective)',
-        value: 8,
-        note: 'Probably easier if you didn\'t learn frontend as you were making the project.',
-      },
-    ],
-    skills: ['Design', 'TSX', 'React'],
-    wiki: site.wiki,
-    github: site.links.GitHub,
-  },
-  {
-    slug: 'liturgy',
-    category: 'arts',
-    title: 'Field Notes on Liturgical Rites, Co-authored Li and Albrecht',
-    year: 2026,
-    summary:
-      'Published professionally in OTHERSIDE Issue 3. The first short story I\'ve written, done in a fugue state during SP2026 finals week. Recursive trolley problems, Prometheus stories, and praying for a better ending. Love and obligation and choice.',
-    description:
-      'Published professionally in OTHERSIDE Issue 3. The first short story I\'ve written, done in a fugue state during SP2026 finals week. Recursive trolley problems, Prometheus stories, and praying for a better ending. Love and obligation and choice.',
-    colors: ['#e6a3cf', '#9bb8f0'],
-    cover: { src: '/images/Arts/liturgy/otherside-coverart.webp' },
-    gallery: ['/images/Arts/liturgy/otherside-issue3.webp'],
-    images: ['/images/Arts/liturgy/otherside-issue3.webp'],
-    featured: true,
-    link: { label: 'Read it for free online!', url: 'https://othersidespec.com/pieces/field-notes-on-liturgical-rites-co-authored-li-and-albrecht/', home: true},
-  },
-  {
-    slug: 'festival24-fa2026',
-    category: 'arts',
-    title: 'Director for Festival24 Fall 2026 @ Cornell',
-    year: 2026,
-    summary:
-      'Directed for Festival24, a 24-hour festival of four plays and one film, all created from scratch within one day; completely packed theater. I had so much fun. I had an incredible time, and I could not have asked for a better cast and crew. Thank you so much to Catherine, Lani, Devi, Crystal, Luke, and Alanna, and to our wonderful producers Bailey and Gwendolyn.',
-    colors: ['#f0a98a', '#a7a2e6'],
-    imgaes: ['/images/Arts/festival24.png'],
-    cover: ['/images/Arts/festival24.png'],
-    gallery: ['/images/Arts/festival24.png'],
-    links: [
-      { label: 'See more on Instagram', url: site.links.Instagram },
-      { label: 'Program!', url: 'https://docs.google.com/document/d/1iBza2IfLlP_-688KPKO6I1lQ4yf7WmsAMPoCMyZlAyk/edit?usp=sharing'}
-    ]
-  },
+/** Gradients used for a project that has no `colors` (it shows these until it has pictures). */
+const FALLBACK_COLORS = [
+  ['#5b8fe8', '#b8a4ee'],
+  ['#e89ab6', '#a9b7f0'],
+  ['#f2b08c', '#e59fc0'],
+  ['#8fb4ee', '#d9a9e6'],
 ];
+
+/** A picture / video reference in a project file -> its real path (see resolve-image.js). */
+const media = (p) => (item) => {
+  if (typeof item === 'string') return resolveRef(item, p.category, p.slug);
+  if (!item || typeof item !== 'object') return item;
+  return {
+    ...item,
+    ...(item.src ? { src: resolveRef(item.src, p.category, p.slug) } : {}),
+    ...(item.video ? { video: resolveRef(item.video, p.category, p.slug) } : {}),
+  };
+};
+const mediaList = (p, v) => (v === undefined ? undefined : [].concat(v).map(media(p)));
+
+const tidy = (p, i) => ({
+  ...p,
+  // in `npm run dev` unfinished projects (draft: true) show up marked as drafts; the built site hides them
+  title: p.draft ? `${p.title} (draft)` : p.title,
+  colors: p.colors || FALLBACK_COLORS[i % FALLBACK_COLORS.length],
+  images: mediaList(p, p.images) || [],
+  cover: mediaList(p, p.cover),
+  gallery: mediaList(p, p.gallery) || [],
+  wiki: p.wiki === true ? site.wiki : p.wiki,
+  github: p.github === true ? site.links.GitHub : p.github,
+  tags: p.tags ?? p.skills ?? [], // the category-page filter uses `tags`, or the skills if there are no tags
+});
+
+/** Every project, in order: by category, then by `order`, then newest first (sorted by the build plugin). */
+export const projects = rawProjects.map(tidy);
+
+/** The projects shown in "Selected work" on the home page, in `featuredOrder` (then date) order. */
+export const featured = projects
+  .filter((p) => p.featured)
+  .sort((a, b) => (a.featuredOrder ?? 1e9) - (b.featuredOrder ?? 1e9));

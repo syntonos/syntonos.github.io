@@ -1,34 +1,44 @@
 /**
- * Markdown support for project descriptions.
+ * Markdown support for project write-ups.
  *
- * A project's body text comes from (first match wins):
- *   1. a file  src/content/projects/<slug>.md
- *   2. the `description` field in src/data/projects.js (markdown allowed)
- *   3. the `summary` field (used when there is no description at all)
+ * The write-up is everything below the settings block in a project file
+ * (content/projects/<category>/<project>.md). If a project has no write-up, its `summary` is used instead.
  *
- * Images: put files in /public/images and write ![caption](images/photo.jpg).
+ * Pictures: put the file in public/images/<category>/<project>/ and write ![caption](photo.jpg). A bare file name
+ * is looked up in that project's own folder; resized copies are used automatically.
  */
 import { marked } from 'marked';
-import { asset } from './dom.js';
+import { imgTag } from './media.js';
+import { resolveRef } from './resolve-image.js';
 
-// Load every .md file in src/content/projects at build time, keyed by path.
-const mdFiles = import.meta.glob('../content/projects/*.md', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
+let current = null; // the project being rendered, so a bare picture name finds that project's folder
+
+marked.use({
+  renderer: {
+    // supports both marked's older (href, title, text) and newer ({ href, title, text }) calls
+    image(a, b, c) {
+      const t = typeof a === 'object' ? a : { href: a, title: b, text: c };
+      const src = current ? resolveRef(t.href, current.category, current.slug) : t.href;
+      return imgTag(src, t.text, { sizes: '(max-width: 760px) 100vw, 760px' });
+    },
+  },
 });
 
 /** The markdown source for a project's page. */
 export function projectBody(p) {
-  return mdFiles[`../content/projects/${p.slug}.md`] || p.description || p.summary || '';
+  return p.body || p.summary || '';
 }
 
-/** Markdown -> HTML, with image paths resolved and external links opening in a new tab. */
-export function renderMarkdown(md) {
-  return marked
-    .parse(md, { async: false })
-    .replace(/(<img[^>]*?\ssrc=")([^"]+)(")/g, (_, a, src, c) => a + asset(src) + c)
-    .replace(/<a href="(https?:[^"]+)"/g, '<a href="$1" target="_blank" rel="noopener"');
+/** Markdown -> HTML (external links open in a new tab). Pass the project so pictures are found. */
+export function renderMarkdown(md, project = null) {
+  current = project;
+  try {
+    return marked
+      .parse(md, { async: false })
+      .replace(/<a href="(https?:[^"]+)"/g, '<a href="$1" target="_blank" rel="noopener"');
+  } finally {
+    current = null;
+  }
 }
 
 /** Plain-text teaser (for the home page when a project has no `summary`). */

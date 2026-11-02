@@ -1,9 +1,9 @@
 /**
  * Home page: the "Selected work" section.
- * Shows every project with `featured: true`, alternating image/text sides.
+ * Shows every project with `featured: true` (in `featuredOrder`), alternating image/text sides.
  */
 import { $, $$ } from './dom.js';
-import { projects } from '../data/projects.js';
+import { featured } from '../data/projects.js';
 import { stackHTML } from './media.js';
 import { projectBody, plainSummary } from './markdown.js';
 import { homeLinks, linkHTML } from './links.js';
@@ -15,14 +15,18 @@ import { homeLinks, linkHTML } from './links.js';
 export function renderFeatured(onLayout) {
   const work = $('#work');
 
-  projects
-    .filter((p) => p.featured)
-    .forEach((p, n) => {
-      const teaser = p.summary || plainSummary(projectBody(p));
-      const links = homeLinks(p); // extra links shown under the text (see `home` / `linksOnHome` in projects.js)
-      const article = document.createElement('article');
-      article.className = 'proj' + (n % 2 ? ' rev' : ''); // .rev flips the sides
-      article.innerHTML = `
+  if (!featured.length) {
+    // no featured projects yet: say so, and the plane has nothing to fly through (plane.js handles that)
+    work.insertAdjacentHTML('beforeend', '<p class="empty-note">Projects coming soon.</p>');
+    return;
+  }
+
+  featured.forEach((p, n) => {
+    const teaser = p.summary || plainSummary(projectBody(p));
+    const links = homeLinks(p); // extra links shown under the text (see `home` / `linksOnHome` in projects.js)
+    const article = document.createElement('article');
+    article.className = 'proj' + (n % 2 ? ' rev' : ''); // .rev flips the sides
+    article.innerHTML = `
         <div class="stack">${stackHTML(p)}</div>
         <div class="txt">
           <h3>${p.title}</h3>
@@ -30,8 +34,8 @@ export function renderFeatured(onLayout) {
           <a class="ul" href="#/${p.category}/${p.slug}">View project</a>
           ${links.length ? `<div class="hl">${links.map(linkHTML).join('')}</div>` : ''}
         </div>`;
-      work.appendChild(article);
-    });
+    work.appendChild(article);
+  });
 
   $$('.stack').forEach(setupStack);
   $$('.stack img').forEach((img) => img.addEventListener('load', onLayout));

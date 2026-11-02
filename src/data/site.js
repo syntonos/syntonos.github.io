@@ -2,7 +2,9 @@
 export const site = {
   name: 'Mina Yeh',
   nameLines: ['Mina', 'Yeh'], // how the big cover title breaks on phones
-  subtitle: 'ECE Junior @ Cornell. I can make anything. [SITE IN PROGRESS...IMPORTING PROJECTS]',
+  // The cover subtitle. Every item is its own line, so you choose exactly where the breaks go (on a narrow phone
+  // a long line can still wrap by itself). A single string works too.
+  subtitle: ['ECE Junior @ Cornell. I can make anything.', '[SITE IN PROGRESS...IMPORTING PROJECTS]'],
   email: 'minayeh1347@gmail.com',
   // Contact page, a wrapper around a Google Form: the visitor fills in this site's own form and the answers
   // are sent to your Google Form (and appear in its Responses tab / linked sheet). Setup, once:
@@ -20,10 +22,10 @@ export const site = {
       fields: { email: 'entry.0000000000', name: 'entry.0000000001', message: 'entry.0000000002' },
     },
   },
-  wiki: 'https://minayeh.com/wiki',
+  wiki: 'https://wiki.minayeh.com',
   footer: '© Mina Yeh',
   about:
-    'I believe adamantly in acting with universal human grace, exercising free will, and pursuing all the things of the universe with full-bodied curiosity. Currently leading FPGA CV and autonomy for Cornell University Physical Intelligence. Currently obsessed with exoskeletons, synthesizers, non-linearity, Taekwondo hurricane kicks, and learning how to better build community. Founding Jamboree Engineering @ Cornell for joyous, unconditionally open-access engineering.',
+    'I believe adamantly in acting with universal human grace, exercising free will, and pursuing all the things of the universe with full-bodied curiosity. Currently leading FPGA CV and autonomy for Cornell University Physical Intelligence. Currently obsessed with exoskeletons, synthesizers, non-linearity, dynos, and learning how to better build community. Founding Jamboree Engineering @ Cornell for joyous, unconditionally open-access engineering.',
   links: {
     Instagram: 'https://www.instagram.com/_heiany/',
     LinkedIn: 'https://www.linkedin.com/in/mina-yeh/',

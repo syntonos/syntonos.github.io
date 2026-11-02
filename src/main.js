@@ -36,7 +36,8 @@ function fixWidows(root) {
 const linkHTML = (n) =>
   `<a href="${n.href}"${n.external ? ' target="_blank" rel="noopener"' : ''}>${n.label}</a>`;
 $('#hero h1').innerHTML = site.nameLines.join('<br class="mb"> ');
-$('#hero .sub').textContent = site.subtitle;
+// the subtitle can be one line of text, or a list of lines (each list item is shown on its own line)
+$('#hero .sub').textContent = [].concat(site.subtitle).join('\n');
 $('.nm').textContent = site.name;
 const em = $('.em');
 em.href = 'mailto:' + site.email;
@@ -117,14 +118,17 @@ $('.nm').onclick = () => {
 
 /* ---- hash router: #/  #/hardware  #/hardware/some-slug  #/awards  #/resume ---- */
 function route() {
-  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  // the address looks like  #/hardware/vamp   or   #/hardware?tag=KiCad  (the part after ? is optional)
+  const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
+  const p = path.split('/').filter(Boolean);
+  const params = Object.fromEntries(new URLSearchParams(query));
   state.isHome = !p[0];
   document.body.classList.toggle('is-home', state.isHome); // heavy grain is for the main page only
   $('#home').style.display = state.isHome ? '' : 'none';
   const pg = $('#page');
   pg.style.display = state.isHome ? 'none' : '';
   if (!state.isHome) {
-    pg.innerHTML = renderPage(p);
+    pg.innerHTML = renderPage(p, params);
     pg.classList.toggle('is-contact', p[0] === 'contact'); // contact page: fit one screen
     setupTileCycling(pg);
     setupCarousels(pg);
