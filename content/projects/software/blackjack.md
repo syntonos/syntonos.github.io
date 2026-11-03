@@ -22,6 +22,7 @@ scores:
   - label: Difficulty (Objective)
     value: 5
     note: A fairly interesting application of linear algebra! Straightforward if your fundamentals are solid.
+size: 1x2
 tags: [Math]
 skills: [Linear Algebra, Markov Chains, Python, numpy]
 ---

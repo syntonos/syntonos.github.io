@@ -16,11 +16,12 @@ scores:
   - label: Fun
     value: 8
   - label: Usability
-    value: 6
+    value: 10
   - label: Difficulty (Subjective)
     value: 7
   - label: Difficulty (Objective)
     value: 7
+size: 4x2
 tags: [Embedded, PCB Design]
 skills: [Soldering, KiCad, C++, 3D printing]
 wiki: https://minayeh.com/wiki

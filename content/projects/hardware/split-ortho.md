@@ -1,6 +1,6 @@
 ---
 title: Split Ortho Keyboard
-year: 2020
+year: 2026
 summary: A tiny 46-key ortholinear split keyboard with a custom PCB, embedded design with the nRF52840 bare MCU. Designed for use with a phone, with custom keybinds and shortcuts. Designed in KiCad. Firmware with QMK.
 order: 4
 featured: true
@@ -22,6 +22,7 @@ scores:
   - label: Difficulty (Objective)
     value: 6
     note: Probably use a devboard instead.
+size: 2x2
 tags: [Embedded, PCB Design]
 skills: [Embedded systems, nRF52840, KiCad, QMK]
 ---

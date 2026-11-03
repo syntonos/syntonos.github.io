@@ -1,6 +1,6 @@
 ---
 title: CUPI CAN Board + Firmware Stack (Autonomous Hexapod)
-year: 2023
+year: 2026
 summary: Cornell University Physical Intelligence (Autonomous Hexapod) - PCB for controlling actuator motion, full-stack firmware development for CAN communication buses. Takes USB-C input from the Jetson t5000 and converts to FDCAN differential bus for 18 actuators. Designed in Altium. Written in C and Python.
 order: 2
 featured: true
@@ -20,6 +20,7 @@ scores:
   - label: Difficulty (Objective)
     value: 6
     note: Firmware stack took a while. Plus lots of differential pairs to wire.
+size: 2x3
 tags: [Embedded, PCB Design]
 skills: [KiCad, C++, 3D printing, Embedded systems]
 ---

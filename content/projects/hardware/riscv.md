@@ -1,10 +1,14 @@
 ---
 title: Single Cycle RISC-V Processor
-year: 2020
+year: 2026
 summary: Designed from scratch in Verilog/SystemVerilog, implementing the datapath and control logic. Verified with full written testbench in assembly and HDL; analyzed critical-path timing, synthesis results, and resource utilization in Quartus.
 order: 3
 featured: true
 featuredOrder: 3
+images: [riscv-chip-planning.png, riscv-oscilloscope.png, riscv-rtlviewer-fulladder.png, riscv-block-diagram.png]
+gallery: [riscv-chip-planning.png, riscv-oscilloscope.png, riscv-rtlviewer-fulladder.png, riscv-block-diagram.png]
+cover: [riscv-chip-planning.png]
+size: 1x2
 colors: ['#f2b08c', '#e59fc0']
 scores:
   - label: Fun

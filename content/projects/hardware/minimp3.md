@@ -18,6 +18,7 @@ scores:
   - label: Difficulty (Objective)
     value: 4
     note: Good project for learning more PCB design. Firmware is a bit tricky though.
+size: 2x2
 tags: [Embedded, PCB Design]
 skills: [Embedded, KiCad, C++, Firmware]
 wiki: https://minayeh.com/wiki
