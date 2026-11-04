@@ -20,7 +20,7 @@ scores:
   - label: Difficulty (Objective)
     value: 6
     note: Firmware stack took a while. Plus lots of differential pairs to wire.
-size: 2x3
+size: 1x2
 tags: [Embedded, PCB Design]
 skills: [KiCad, C++, 3D printing, Embedded systems]
 ---
