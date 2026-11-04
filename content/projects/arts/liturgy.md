@@ -5,6 +5,7 @@ summary: Published professionally in OTHERSIDE Issue 3. The first short story I'
 order: 1
 featured: true
 featuredOrder: 6
+size: 2x2
 colors: ['#e6a3cf', '#9bb8f0']
 images: [otherside-issue3.webp]
 cover: otherside-coverart.webp

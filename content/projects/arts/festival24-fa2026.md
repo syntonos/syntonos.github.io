@@ -7,6 +7,7 @@ colors: ['#f0a98a', '#a7a2e6']
 images: [festival24.png]
 cover: festival24.png
 gallery: [festival24.png]
+size: 1x2
 links:
   - label: See more on Instagram
     url: https://www.instagram.com/_heiany/
