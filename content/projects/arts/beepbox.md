@@ -1,7 +1,7 @@
 ---
 title: Beepbox Song
 year: 2020
-summary: A very old song, made with Beepbox! Vaguely Halloween themed. I do think the was all the way back in quarantine, but I'm still pretty proud of it! I am still fairly obsessed with the theremin as an instrument now; it's just so funky sounding, and I really love pizzicato strings. 
+summary: A very old song, made with Beepbox! Vaguely Halloween themed. I do think this was all the way back in quarantine, but I am still fairly obsessed with the theremin as an instrument now; it's just so funky sounding, and I really love pizzicato strings. 
 order: 3
 size: 1x2
 colors: ['#f0a98a', '#a7a2e6']
