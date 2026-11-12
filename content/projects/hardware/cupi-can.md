@@ -24,5 +24,5 @@ scores:
     note: Firmware stack took a while. Plus lots of differential pairs to wire.
 size: 2x2
 tags: [Embedded, PCB Design]
-skills: [KiCad, C++, 3D printing, Embedded systems]
+skills: [Embedded systems, Altium, HAL, C, STM32]
 ---

@@ -5,6 +5,7 @@ summary: A PDB converting a 9V input to 5V (Buck DC-DC Converter), then to 3V3 (
 images: [nme-pdb-3d.png, nme-pdb-layout.png, nme-pdb-schematic.png]
 gallery: [nme-pdb-3d.png, nme-pdb-layout.png, nme-pdb-schematic.png]
 cover: [nme-pdb-3d.png]
-order: 4
+order: 8
 skills: ['PCB Design']
+size: 1x2
 ---
