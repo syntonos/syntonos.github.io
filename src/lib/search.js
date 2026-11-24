@@ -64,10 +64,10 @@ function render() {
   results = search(query);
   selected = 0;
   hint.textContent = !query
-    ? 'Search titles, skills and write-ups.'
+    ? ''
     : results.length
       ? ''
-      : 'Nothing found. Try another word.';
+      : 'Nothing found.';
   list.innerHTML = results
     .map((p, i) => {
       const meta = [categories[p.category]?.title, p.year].filter(Boolean).join(', ');

@@ -4,7 +4,7 @@ export const site = {
   nameLines: ['Mina', 'Yeh'], // how the big cover title breaks on phones
   // The cover subtitle. Every item is its own line, so you choose exactly where the breaks go (on a narrow phone
   // a long line can still wrap by itself). A single string works too.
-  subtitle: ['ECE Junior @ Cornell.', 'I can make anything.', '[SITE IN PROGRESS...IMPORTING PROJECTS]'],
+  subtitle: ['Junior ECE @ Cornell. Prev R&D @ MAG Manufacturing.', '[SITE IN PROGRESS...IMPORTING PROJECTS]'],
   email: 'minayeh1347@gmail.com',
   // Contact page, a wrapper around a Google Form: the visitor fills in this site's own form and the answers
   // are sent to your Google Form (and appear in its Responses tab / linked sheet). Setup, once:
@@ -18,8 +18,8 @@ export const site = {
     description:
       'Send me a message! I\'d love to chat!',
     googleForm: {
-      url: 'https://forms.gle/VXJ4Nog4Lu6D8R2C7', // e.g. 'https://docs.google.com/forms/d/e/1FAIpQLSc.../formResponse'
-      fields: { email: 'entry.0000000000', name: 'entry.0000000001', message: 'entry.0000000002' },
+      url: 'https://forms.gle/47c3AnD2SNr8AeWc6', // e.g. 'https://docs.google.com/forms/d/e/1FAIpQLSc.../formResponse'
+      fields: { email: 'entry.1840542881', name: 'entry.56259189', message: 'entry.393870343' },
     },
   },
   wiki: 'https://minayeh.com/wiki',

@@ -90,7 +90,7 @@ export const resume = {
       description: '3/5. Very fun! Highly recommended!' },
     {
       name: '52 Books a Year',
-      description: '38/52. Currently reading <em>Drive Your Plow Over the Bones of the Dead</em> by Olga Tokarczuk and <em>The Myth of Sisyphus</em> (中) by Albert Camus.',
+      description: '40/52. Currently reading <em>Drive Your Plow Over the Bones of the Dead</em> by Olga Tokarczuk and <em>The Myth of Sisyphus</em> (中) by Albert Camus.',
     },
   ],
 };
