@@ -1,21 +1,43 @@
 /**
  * Subpage templates: category pages, project pages, awards and resume.
- * `renderPage(routeParts)` returns the HTML string for the current route.
+ * `renderPage(routeParts, params)` returns the HTML string for the current route
+ * (`params` = the bit after ? in the address, e.g. #/hardware?tag=KiCad gives { tag: 'KiCad' }).
  */
 import { site } from '../data/site.js';
 import { categories, projects, scoreLabels } from '../data/projects.js';
 import { awards, resume } from '../data/pages.js';
 import { asset } from './dom.js';
-import { coverOf, galleryOf, tileBg } from './media.js';
+import { coverOf, galleryOf, imgTag, tileBg } from './media.js';
 import { carouselHTML } from './carousel.js';
 import { projectBody, renderMarkdown } from './markdown.js';
 import { projectLinks, linkHTML } from './links.js';
+import { mailLink } from './mail.js';
+import { now } from 'virtual:content';
 
 // ---------- small helpers ----------
 const EXTERNAL = 'target="_blank" rel="noopener"';
 const inCategory = (key) => projects.filter((p) => p.category === key);
 const backLink = (href, text) => `<a class="back" href="${href}">← ${text}</a>`;
-const notFound = () => `<h1 class="pt">Not found</h1>${backLink('#/', 'Home')}`;
+/** "Not found": a paper plane that flew off course, with a way home. */
+const notFound = () => `
+  <h1 class="pt">Lost?</h1>
+  <p class="lead">This page flew off course, or never existed.</p>
+  <svg class="lost" viewBox="0 0 520 170" aria-hidden="true">
+    <path class="lost-path" d="M10 140 C 120 140, 140 40, 250 60 S 400 150, 470 70" />
+    <g class="lost-plane" transform="translate(470 70) rotate(-49)">
+      <polygon points="26,0 -30,-17 -10,0" fill="#ffffff" />
+      <polygon points="26,0 -10,0 -30,17" fill="#c4c4cb" />
+    </g>
+  </svg>
+  <p><a class="ul" href="#/">Take me home</a></p>`;
+
+const STATUS_LABEL = { idea: 'Idea', 'in progress': 'In progress', paused: 'Paused', finished: 'Finished' };
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** '2026-03-14' -> 'Mar 14, 2026', '2026-03' -> 'Mar 2026', '2026' -> '2026' */
+const niceDate = (s) => {
+  const [y, m, d] = String(s).split('-');
+  return [m && MONTHS[+m - 1], d && `${+d},`, y].filter(Boolean).join(' ');
+};
 /** [['Role', '2024'], ...] -> divider rows */
 const rows = (list) => list.map(([a, b]) => `<div class="row"><span>${a}</span><i>${b}</i></div>`).join('');
 
@@ -27,19 +49,18 @@ const items = (list) =>
 function tile(p, style = '') {
   const angle = 120 + inCategory(p.category).indexOf(p) * 25; // varies the gradient per tile
   const imgs = coverOf(p); // the project's `cover` if it has one, otherwise its home-page images
-  // every image is stacked in the tile; setupTileCycling() (media.js) fades through them on hover
+  // every picture is stacked in the tile; setupTileCycling() (media.js) fades through them on hover
   const pics = imgs
-    .map(
-      (im, j) =>
-        `<img class="${j ? '' : 'on'}" src="${asset(im.src)}" alt="${String(im.alt).replace(/"/g, '&quot;')}">`,
-    )
+    .map((im, j) => imgTag(im.src, im.alt, { cls: j ? '' : 'on', sizes: '(max-width: 760px) 50vw, 300px' }))
     .join('');
   const ti = imgs.length
     ? `<div class="ti has-img">${pics}</div>`
     : `<div class="ti" style="${tileBg(p, angle)}"></div>`;
   return `<a class="tile" href="#/${p.category}/${p.slug}" style="${style}">
     ${ti}
-    <b>${p.title}</b><small>${categories[p.category].title}, ${p.year}</small></a>`;
+    <b>${p.title}</b><small>${[categories[p.category].title, p.year].filter(Boolean).join(', ')}${
+      p.status && p.status !== 'finished' ? ` · ${STATUS_LABEL[p.status].toLowerCase()}` : ''
+    }</small></a>`;
 }
 
 /**
@@ -62,10 +83,37 @@ function tileSize(p) {
   return m ? { w: Math.min(4, Math.max(1, +m[1])), h: Math.min(3, Math.max(1, +m[2])) } : null;
 }
 
-function categoryPage(key) {
+/**
+ * The row of filter links under the category title: "All" plus every tag used in the category
+ * (a project's `tags`, or its `skills` if it has no tags). The chosen tag is kept in the address (?tag=KiCad).
+ */
+function tagBar(key, list, active) {
+  const counts = new Map(); // lowercase tag -> { label, count }
+  list.forEach((p) =>
+    (p.tags || []).forEach((t) => {
+      const e = counts.get(t.toLowerCase()) || { label: t, count: 0 };
+      e.count++;
+      counts.set(t.toLowerCase(), e);
+    }),
+  );
+  if (list.length < 2 || !counts.size) return '';
+  const tags = [...counts.entries()].sort(
+    (a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label),
+  );
+  const link = (href, label, on) => `<a class="${on ? 'on' : ''}" href="${href}">${label}</a>`;
+  return `<nav class="tags" aria-label="Filter by skill">${link(`#/${key}`, 'All', !active)}${tags
+    .map(([k, e]) => link(`#/${key}?tag=${encodeURIComponent(e.label)}`, e.label, k === active))
+    .join('')}</nav>`;
+}
+
+function categoryPage(key, params = {}) {
   const { title, blurb } = categories[key];
-  const items = inCategory(key);
-  let html = `<h1 class="pt">${title}</h1><p class="lead">${blurb}</p>`;
+  const all = inCategory(key);
+  const active = (params.tag || '').toLowerCase();
+  const items = active ? all.filter((p) => (p.tags || []).some((t) => t.toLowerCase() === active)) : all;
+  let html = `<h1 class="pt">${title}</h1><p class="lead">${blurb}</p>${tagBar(key, all, active)}`;
+  if (!all.length) return html + '<p class="body">Projects coming soon.</p>';
+  if (!items.length) return html + '<p class="body">Nothing here with that tag.</p>';
   // If any project in this category has a `size`, tiles use exactly the sizes you chose (projects
   // without one are 1x1) and the grid packs them together. Otherwise the automatic layout below is used.
   if (items.some((p) => p.size)) {
@@ -80,7 +128,7 @@ function categoryPage(key) {
   for (let b = 0; b * 4 < items.length; b++) {
     html += `<div class="blk v${b % 3}">${items
       .slice(b * 4, b * 4 + 4)
-      .map(tile)
+      .map((p) => tile(p))
       .join('')}</div>`;
   }
   return html;
@@ -117,6 +165,18 @@ function projectPage(categoryKey, slug) {
     ? `<div class="lk${allLinks.length <= 3 ? ' few' : ''}">${allLinks.map(linkHTML).join('')}</div>`
     : '';
 
+  // Previous / next project in this category's order
+  const siblings = inCategory(categoryKey);
+  const at = siblings.indexOf(p);
+  const prev = siblings[at - 1];
+  const after = siblings[at + 1];
+  const stepLink = (q, label) =>
+    q ? `<small>${label}</small><a class="ul" href="#/${q.category}/${q.slug}">${q.title}</a>` : '';
+  const prevNext =
+    siblings.length > 1
+      ? `<div class="pn"><div>${stepLink(prev, 'Previous')}</div><div class="r">${stepLink(after, 'Next')}</div></div>`
+      : '';
+
   // "Next up": three random other projects, from any category
   const next = projects
     .filter((q) => q !== p)
@@ -124,7 +184,7 @@ function projectPage(categoryKey, slug) {
     .slice(0, 3);
 
   // Description on the left and an image carousel on the right, if the project has a `gallery`
-  const body = `<div class="md">${renderMarkdown(projectBody(p))}</div>`;
+  const body = `<div class="md">${renderMarkdown(projectBody(p), p)}</div>`;
   const gallery = galleryOf(p);
   // The description, skills and links form one text column, so skills and links sit right under the
   // description (with a little space) no matter how tall the carousel is.
@@ -134,9 +194,16 @@ function projectPage(categoryKey, slug) {
   return `
     ${backLink('#/' + categoryKey, categories[categoryKey].title)}
     <h1 class="pt">${p.title}</h1>
-    <p class="meta">${categories[categoryKey].title}, ${p.year}</p>
+    <p class="meta">${[
+      [categories[categoryKey].title, p.year].filter(Boolean).join(', '),
+      p.status && STATUS_LABEL[p.status],
+      p.updated && `Updated ${niceDate(p.updated)}`,
+    ]
+      .filter(Boolean)
+      .join(' · ')}</p>
     ${scoreBoxes}
     ${content}
+    ${prevNext}
     <h2 class="h3" style="margin-top:84px">Next up</h2>
     <div class="sug">${next.map(tile).join('')}</div>`;
 }
@@ -167,7 +234,7 @@ function resumePage() {
     <p class="lead">${r.intro}</p>
     <div class="dl-row">${downloads}</div>
     <p class="body" style="margin:0 0 40px">Contact me through
-      <a class="ul" href="mailto:${site.email}">email</a>,
+      ${mailLink('email')},
       <a class="ul" href="${site.links.Instagram}" ${EXTERNAL}>instagram</a>, or
       <a class="ul" href="${site.links.LinkedIn}" ${EXTERNAL}>linkedin</a>.</p>
     <p class="h3">Experience</p>${rows(r.experience)}
@@ -190,7 +257,7 @@ function contactPage() {
       <div class="cp-info">
         <p class="lead">${site.contact.description}</p>
         <p class="body">Contact me directly through
-          <a class="ul" href="mailto:${site.email}">email</a>,
+          ${mailLink('email')},
           <a class="ul" href="${site.links.Instagram}" ${EXTERNAL}>instagram</a>, or
           <a class="ul" href="${site.links.LinkedIn}" ${EXTERNAL}>linkedin</a>.</p>
       </div>
@@ -217,13 +284,22 @@ function contactPage() {
     </div>`;
 }
 
+// ---------- now (#/now) ----------
+// Written in content/now.md: what you are doing at the moment. The menu link appears when that file exists.
+function nowPage() {
+  if (!now) return notFound();
+  const updated = now.updated ? `<p class="meta">Updated ${niceDate(now.updated)}</p>` : '';
+  return `<h1 class="pt">${now.title}</h1>${updated}<div class="md">${renderMarkdown(now.body, { category: 'now', slug: '' })}</div>`;
+}
+
 // ---------- router entry ----------
 /** @param {string[]} parts route parts, e.g. ['hardware', 'bench-power-supply'] */
-export function renderPage(parts) {
+export function renderPage(parts, params = {}) {
   const [first, second] = parts;
-  if (categories[first]) return second ? projectPage(first, second) : categoryPage(first);
+  if (categories[first]) return second ? projectPage(first, second) : categoryPage(first, params);
   if (first === 'awards') return awardsPage();
   if (first === 'resume') return resumePage();
   if (first === 'contact') return contactPage();
+  if (first === 'now') return nowPage();
   return notFound();
 }

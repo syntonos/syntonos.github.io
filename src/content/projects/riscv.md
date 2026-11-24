@@ -1,1 +1,0 @@
-Designed from scratch in Verilog/SystemVerilog, implementing the datapath and control logic. Verified with full written testbench in assembly and HDL; analyzed critical-path timing, synthesis results, and resource utilization in Quartus.

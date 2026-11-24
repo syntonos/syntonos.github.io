@@ -2,7 +2,9 @@
 export const site = {
   name: 'Mina Yeh',
   nameLines: ['Mina', 'Yeh'], // how the big cover title breaks on phones
-  subtitle: 'ECE Junior @ Cornell. I can make anything. [SITE IN PROGRESS...IMPORTING PROJECTS]',
+  // The cover subtitle. Every item is its own line, so you choose exactly where the breaks go (on a narrow phone
+  // a long line can still wrap by itself). A single string works too.
+  subtitle: ['ECE Junior @ Cornell.', 'I can make anything.', '[SITE IN PROGRESS...IMPORTING PROJECTS]'],
   email: 'minayeh1347@gmail.com',
   // Contact page, a wrapper around a Google Form: the visitor fills in this site's own form and the answers
   // are sent to your Google Form (and appear in its Responses tab / linked sheet). Setup, once:

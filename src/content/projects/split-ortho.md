@@ -1,1 +1,0 @@
-A tiny 46-key ortholinear split keyboard with a custom PCB, embedded design with the nRF52840 bare MCU. Designed for use with a phone, with custom keybinds and shortcuts. Designed in KiCad. Firmware with QMK.

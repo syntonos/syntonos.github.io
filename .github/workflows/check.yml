@@ -1,0 +1,23 @@
+# Checks your content on every push and pull request, so a mistake shows up as a red mark on the commit
+# (with the plain list of problems in the log) instead of a broken site later.
+# It runs the same content check as `npm run build`: misspelled settings, missing pictures, bad sizes or links...
+# Publishing is done by the separate "Deploy to GitHub Pages" workflow.
+name: Check content
+on:
+  push:
+  pull_request:
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check the content and build the site
+        run: npm run build

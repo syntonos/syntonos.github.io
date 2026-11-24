@@ -17,6 +17,13 @@ import { renderPage } from './lib/pages.js';
 import { setupTileCycling } from './lib/media.js';
 import { setupCarousels } from './lib/carousel.js';
 import { setupContactForm } from './lib/contact.js';
+import { now } from 'virtual:content';
+import { initMail, reversedEmail } from './lib/mail.js';
+import { initLightbox } from './lib/lightbox.js';
+import { closeSearch, initSearch, openSearch, searchIsOpen } from './lib/search.js';
+import { initSkyTime } from './lib/sky-time.js';
+import { initDriftGull } from './lib/drift-gull.js';
+import { initAnalytics, trackPage } from './lib/analytics.js';
 import { createPlane } from './lib/plane.js';
 import { initScrollbar } from './lib/scrollbar.js';
 
@@ -36,25 +43,35 @@ function fixWidows(root) {
 const linkHTML = (n) =>
   `<a href="${n.href}"${n.external ? ' target="_blank" rel="noopener"' : ''}>${n.label}</a>`;
 $('#hero h1').innerHTML = site.nameLines.join('<br class="mb"> ');
-$('#hero .sub').textContent = site.subtitle;
+// the subtitle can be one line of text, or a list of lines (each list item is shown on its own line)
+$('#hero .sub').textContent = [].concat(site.subtitle).join('\n');
 $('.nm').textContent = site.name;
-const em = $('.em');
-em.href = 'mailto:' + site.email;
-em.textContent = site.email;
+// the address in the top bar is not plain text on the page: CSS draws it from this reversed copy (see mail.js)
+$('.em').dataset.r = reversedEmail();
 $('#about').textContent = site.about;
 $('#foot').textContent = site.footer;
+// the "Now" link appears by itself when content/now.md exists (unless you already put it in `nav` in site.js)
+const links =
+  now && !nav.some((n) => n.href === '#/now')
+    ? [...nav, { label: 'Now', href: '#/now', menu: true, footer: true }]
+    : nav;
 $('#menu').insertAdjacentHTML(
   'afterbegin',
-  nav
+  links
     .filter((n) => n.menu)
     .map(linkHTML)
     .join(''),
 );
-$('#endlinks').innerHTML = nav
+$('#endlinks').innerHTML = links
   .filter((n) => n.footer)
   .map((n) => `<li>${linkHTML(n)}</li>`)
   .join('');
 mountIcons();
+initMail(); // email links that keep the address out of the page (mail.js)
+initLightbox(); // click a picture in a write-up or carousel to see it large
+initSkyTime(); // the cover sky follows the time of day
+initDriftGull(state); // a gull drifts across the cover now and then
+initAnalytics(); // visit counts, only if analytics is set in site.js
 renderFeatured(() => rebuild()); // rebuild = recalc the plane's path once images load
 fixWidows(document);
 initScrollbar(); // dotted line + paper plane scrollbar (mouse/trackpad only)
@@ -99,12 +116,15 @@ const burger = $('#burger'),
   menu = $('#menu');
 function toggleMenu(open) {
   const v = open ?? !menu.classList.contains('on');
+  if (v) closeSearch(); // the menu and the search never show together
   menu.classList.toggle('on', v);
   burger.classList.toggle('x', v);
   burger.setAttribute('aria-expanded', v);
   document.body.style.overflow = v ? 'hidden' : '';
 }
 burger.onclick = () => toggleMenu();
+initSearch({ onOpen: () => toggleMenu(false) });
+$('#searchBtn').addEventListener('click', () => (searchIsOpen() ? closeSearch() : openSearch()));
 $$('#menu a').forEach((a) => a.addEventListener('click', () => toggleMenu(false)));
 addEventListener('keydown', (e) => e.key === 'Escape' && toggleMenu(false));
 $('.dn').onclick = (e) => {
@@ -117,14 +137,17 @@ $('.nm').onclick = () => {
 
 /* ---- hash router: #/  #/hardware  #/hardware/some-slug  #/awards  #/resume ---- */
 function route() {
-  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  // the address looks like  #/hardware/vamp   or   #/hardware?tag=KiCad  (the part after ? is optional)
+  const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
+  const p = path.split('/').filter(Boolean);
+  const params = Object.fromEntries(new URLSearchParams(query));
   state.isHome = !p[0];
   document.body.classList.toggle('is-home', state.isHome); // heavy grain is for the main page only
   $('#home').style.display = state.isHome ? '' : 'none';
   const pg = $('#page');
   pg.style.display = state.isHome ? 'none' : '';
   if (!state.isHome) {
-    pg.innerHTML = renderPage(p);
+    pg.innerHTML = renderPage(p, params);
     pg.classList.toggle('is-contact', p[0] === 'contact'); // contact page: fit one screen
     setupTileCycling(pg);
     setupCarousels(pg);
@@ -134,8 +157,14 @@ function route() {
     document.title = ($('.pt', pg)?.textContent || '') + ' | ' + site.name;
   } else document.title = site.name;
   toggleMenu(false);
+  // soft page transition: the page that is now showing fades in (see .enter in style.css)
+  const arriving = state.isHome ? $('#home') : pg;
+  arriving.classList.remove('enter');
+  void arriving.offsetWidth; // lets the animation start again
+  arriving.classList.add('enter');
   state.isHome ? rebuild() : tick();
   updateScrollLock();
+  trackPage(); // counts the page, if analytics is on
 }
 /** The contact page is meant to fit one screen: lock scrolling while it fits, allow it only if it overflows. */
 function updateScrollLock() {
